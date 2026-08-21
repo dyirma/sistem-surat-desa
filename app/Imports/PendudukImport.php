@@ -7,10 +7,13 @@ use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Concerns\WithChunkReading;
 use Maatwebsite\Excel\Concerns\WithBatchInserts;
+use Maatwebsite\Excel\Concerns\WithUpserts;
 use PhpOffice\PhpSpreadsheet\Shared\Date;
 
-class PendudukImport implements ToModel, WithHeadingRow, WithChunkReading, WithBatchInserts
+class PendudukImport implements ToModel, WithHeadingRow, WithChunkReading, WithBatchInserts, WithUpserts
 {
+    private $importedNiks = [];
+
     public function batchSize(): int
     {
         return 250; // Insert ke database per 250 baris
@@ -20,6 +23,15 @@ class PendudukImport implements ToModel, WithHeadingRow, WithChunkReading, WithB
     {
         return 250; // Baca memori Excel per 250 baris agar tidak error
     }
+
+    /**
+     * Tentukan kolom unik untuk fitur Upsert (Update or Insert)
+     */
+    public function uniqueBy()
+    {
+        return 'nik';
+    }
+
     public function model(array $row)
     {
         // NO, NIK, NO_KK, NAMA, DUKUH, RW, RT, HUB_KEL, JENIS_KEL, AGAMA, PEKERJAAN, TEMP_LAHIR, TGL. LAHIR, USIA, STS KWN
