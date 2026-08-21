@@ -44,6 +44,11 @@
                     <i class="ti ti-settings" style="font-size: 20px;"></i>
                     <span>Pengaturan Surat</span>
                 </a>
+
+                <a href="{{ route('template-surat.index') }}" class="menu-item {{ request()->routeIs('template-surat.*') ? 'active' : '' }}">
+                    <i class="ti ti-template" style="font-size: 20px;"></i>
+                    <span>Template Surat</span>
+                </a>
             </div>
         </aside>
 

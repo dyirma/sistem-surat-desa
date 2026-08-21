@@ -5,25 +5,14 @@ namespace App\Imports;
 use App\Models\Penduduk;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
-use Maatwebsite\Excel\Concerns\WithChunkReading;
-use Maatwebsite\Excel\Concerns\WithBatchInserts;
 use PhpOffice\PhpSpreadsheet\Shared\Date;
 
-class PendudukImport implements ToModel, WithHeadingRow, WithChunkReading, WithBatchInserts
+class PendudukImport implements ToModel, WithHeadingRow
 {
-    public function batchSize(): int
-    {
-        return 250; // Insert ke database per 250 baris
-    }
-
-    public function chunkSize(): int
-    {
-        return 250; // Baca memori Excel per 250 baris agar tidak error
-    }
     public function model(array $row)
     {
         // NO, NIK, NO_KK, NAMA, DUKUH, RW, RT, HUB_KEL, JENIS_KEL, AGAMA, PEKERJAAN, TEMP_LAHIR, TGL. LAHIR, USIA, STS KWN
-        
+
         // Skip baris jika NIK kosong
         if (empty($row['nik'])) {
             return null;

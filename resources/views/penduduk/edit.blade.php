@@ -90,11 +90,11 @@
             </div>
             <div class="form-group">
                 <label>Tanggal Lahir <span style="color:red">*</span></label>
-                <input type="date" name="tanggal_lahir" class="form-control" value="{{ old('tanggal_lahir', $penduduk->tanggal_lahir) }}" required>
+                <input type="date" name="tanggal_lahir" id="tanggal_lahir" class="form-control" value="{{ old('tanggal_lahir', $penduduk->tanggal_lahir) }}" required>
             </div>
             <div class="form-group">
                 <label>Usia</label>
-                <input type="number" name="usia" class="form-control" value="{{ old('usia', $penduduk->usia) }}" placeholder="Contoh: 35">
+                <input type="number" name="usia" id="usia" class="form-control" value="{{ old('usia', $penduduk->usia) }}" placeholder="Otomatis terisi" readonly style="background-color: #f3f4f6; cursor: not-allowed;">
             </div>
 
             <div class="form-group">
@@ -158,4 +158,35 @@
         </div>
     </form>
 </div>
+@endsection
+
+@section('scripts')
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const tglLahirInput = document.getElementById('tanggal_lahir');
+        const usiaInput = document.getElementById('usia');
+
+        function calculateAge() {
+            if (tglLahirInput.value) {
+                const birthDate = new Date(tglLahirInput.value);
+                const today = new Date();
+                let age = today.getFullYear() - birthDate.getFullYear();
+                const m = today.getMonth() - birthDate.getMonth();
+                if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+                    age--;
+                }
+                usiaInput.value = age;
+            } else {
+                usiaInput.value = '';
+            }
+        }
+
+        tglLahirInput.addEventListener('change', calculateAge);
+        
+        // Calculate on initial load if age is missing
+        if(!usiaInput.value) {
+            calculateAge();
+        }
+    });
+</script>
 @endsection
