@@ -28,6 +28,8 @@ Route::resource('penduduk', \App\Http\Controllers\PendudukController::class);
 Route::resource('template-surat', \App\Http\Controllers\TemplateSuratController::class);
 
 Route::get('/pengaturan', [\App\Http\Controllers\PengaturanController::class, 'index'])->name('pengaturan.index');
-Route::post('/pengaturan', [\App\Http\Controllers\PengaturanController::class, 'update'])->name('pengaturan.update');
+Route::post('/pengaturan/profil', [\App\Http\Controllers\PengaturanController::class, 'updateProfil'])->name('pengaturan.update_profil');
+Route::post('/pengaturan/pejabat', [\App\Http\Controllers\PengaturanController::class, 'updatePejabat'])->name('pengaturan.update_pejabat');
+Route::post('/pengaturan/penomoran', [\App\Http\Controllers\PengaturanController::class, 'updatePenomoran'])->name('pengaturan.update_penomoran');
 
 Route::get('/riwayat', [\App\Http\Controllers\RiwayatController::class, 'index'])->name('riwayat.index');
