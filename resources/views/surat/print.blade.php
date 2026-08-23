@@ -76,37 +76,41 @@
         </div>
 
         <div class="isi-surat">
-            <p class="pembuka">Yang bertanda tangan di bawah ini {{ $pengaturan->jabatan_kades ?? 'Kepala Desa' }} {{ ucwords(strtolower(str_replace('DESA ', '', $pengaturan->nama_desa ?? 'Jangglengan'))) }}, Kecamatan Nguter, Kabupaten Sukoharjo, menerangkan dengan sebenarnya bahwa:</p>
-            
-            <table class="tabel-data">
-                <tr><td>Nama Lengkap</td><td>:</td><td><strong>{{ strtoupper($validated['nama']) }}</strong></td></tr>
-                <tr><td>NIK</td><td>:</td><td>{{ $validated['nik'] }}</td></tr>
-                <tr><td>Tempat, Tanggal Lahir</td><td>:</td><td>{{ $validated['tempat_lahir'] }}, {{ \Carbon\Carbon::parse($validated['tanggal_lahir'])->format('d-m-Y') }}</td></tr>
-                <tr><td>Jenis Kelamin</td><td>:</td><td>{{ $validated['jenis_kelamin'] }}</td></tr>
-                <tr><td>Agama</td><td>:</td><td>{{ $validated['agama'] }}</td></tr>
-                <tr><td>Pekerjaan</td><td>:</td><td>{{ $validated['pekerjaan'] }}</td></tr>
-                <tr><td>Status Perkawinan</td><td>:</td><td>{{ $validated['status_perkawinan'] }}</td></tr>
-                <tr><td>Alamat</td><td>:</td><td>{{ $validated['alamat'] }}</td></tr>
-            </table>
+            @if(isset($validated['edited_content']))
+                {!! $validated['edited_content'] !!}
+            @else
+                <p class="pembuka">Yang bertanda tangan di bawah ini {{ $pengaturan->jabatan_kades ?? 'Kepala Desa' }} {{ ucwords(strtolower(str_replace('DESA ', '', $pengaturan->nama_desa ?? 'Jangglengan'))) }}, Kecamatan Nguter, Kabupaten Sukoharjo, menerangkan dengan sebenarnya bahwa:</p>
+                
+                <table class="tabel-data">
+                    <tr><td>Nama Lengkap</td><td>:</td><td><strong>{{ strtoupper($validated['nama']) }}</strong></td></tr>
+                    <tr><td>NIK</td><td>:</td><td>{{ $validated['nik'] }}</td></tr>
+                    <tr><td>Tempat, Tanggal Lahir</td><td>:</td><td>{{ $validated['tempat_lahir'] }}, {{ \Carbon\Carbon::parse($validated['tanggal_lahir'])->format('d-m-Y') }}</td></tr>
+                    <tr><td>Jenis Kelamin</td><td>:</td><td>{{ $validated['jenis_kelamin'] }}</td></tr>
+                    <tr><td>Agama</td><td>:</td><td>{{ $validated['agama'] }}</td></tr>
+                    <tr><td>Pekerjaan</td><td>:</td><td>{{ $validated['pekerjaan'] }}</td></tr>
+                    <tr><td>Status Perkawinan</td><td>:</td><td>{{ $validated['status_perkawinan'] }}</td></tr>
+                    <tr><td>Alamat</td><td>:</td><td>{{ $validated['alamat'] }}</td></tr>
+                </table>
 
-            <p class="penutup">Orang tersebut di atas adalah benar-benar penduduk/warga {{ ucwords(strtolower($pengaturan->nama_desa ?? 'Desa Jangglengan')) }} yang berdomisili di alamat tersebut. 
-            
-            @if($surat->jenis_surat == 'domisili')
-                Surat keterangan ini dibuat untuk menyatakan domisili yang bersangkutan di desa kami.
-            @elseif($surat->jenis_surat == 'usaha')
-                Surat keterangan ini dibuat untuk menerangkan bahwa yang bersangkutan benar-benar memiliki usaha di wilayah desa kami.
-            @elseif($surat->jenis_surat == 'tidak-mampu')
-                Surat keterangan ini dibuat untuk menerangkan bahwa yang bersangkutan tergolong keluarga kurang mampu (GAKIN).
-            @elseif($surat->jenis_surat == 'nikah')
-                Surat keterangan ini dibuat sebagai pengantar kelengkapan persyaratan administrasi pernikahan.
+                <p class="penutup">Orang tersebut di atas adalah benar-benar penduduk/warga {{ ucwords(strtolower($pengaturan->nama_desa ?? 'Desa Jangglengan')) }} yang berdomisili di alamat tersebut. 
+                
+                @if($surat->jenis_surat == 'domisili')
+                    Surat keterangan ini dibuat untuk menyatakan domisili yang bersangkutan di desa kami.
+                @elseif($surat->jenis_surat == 'usaha')
+                    Surat keterangan ini dibuat untuk menerangkan bahwa yang bersangkutan benar-benar memiliki usaha di wilayah desa kami.
+                @elseif($surat->jenis_surat == 'tidak-mampu')
+                    Surat keterangan ini dibuat untuk menerangkan bahwa yang bersangkutan tergolong keluarga kurang mampu (GAKIN).
+                @elseif($surat->jenis_surat == 'nikah')
+                    Surat keterangan ini dibuat sebagai pengantar kelengkapan persyaratan administrasi pernikahan.
+                @endif
+                </p>
+
+                @if(!empty($validated['keperluan']))
+                <p style="text-indent: 1cm; margin-top: 10px;">Adapun surat keterangan ini diberikan untuk keperluan: <strong>{{ $validated['keperluan'] }}</strong>.</p>
+                @endif
+
+                <p class="penutup" style="margin-bottom: 30px;">Demikian surat keterangan ini dibuat dengan sebenarnya agar dapat dipergunakan sebagaimana mestinya.</p>
             @endif
-            </p>
-
-            @if(!empty($validated['keperluan']))
-            <p style="text-indent: 1cm; margin-top: 10px;">Adapun surat keterangan ini diberikan untuk keperluan: <strong>{{ $validated['keperluan'] }}</strong>.</p>
-            @endif
-
-            <p class="penutup" style="margin-bottom: 30px;">Demikian surat keterangan ini dibuat dengan sebenarnya agar dapat dipergunakan sebagaimana mestinya.</p>
         </div>
 
         <div class="ttd-container">

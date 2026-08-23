@@ -20,45 +20,21 @@
         </div>
         
         <div class="surat-grid">
-            <a href="{{ route('surat.create', ['jenis' => 'domisili']) }}" class="surat-card">
+            @foreach($templates as $template)
+            <a href="{{ route('surat.create', ['jenis' => $template->jenis_surat]) }}" class="surat-card">
                 <div class="surat-card-header">
-                    <div class="surat-card-title">Surat Keterangan Domisili</div>
+                    <div class="surat-card-title">{{ $template->nama_template }}</div>
                     <i class="ti ti-chevron-right text-muted"></i>
                 </div>
                 <div class="surat-card-desc">
-                    Surat yang menyatakan kebenaran alamat tinggal seseorang di wilayah desa.
+                    {{ $template->deskripsi ?? 'Pilih untuk membuat ' . $template->nama_template }}
                 </div>
             </a>
+            @endforeach
             
-            <a href="{{ route('surat.create', ['jenis' => 'usaha']) }}" class="surat-card">
-                <div class="surat-card-header">
-                    <div class="surat-card-title">Surat Keterangan Usaha</div>
-                    <i class="ti ti-chevron-right text-muted"></i>
-                </div>
-                <div class="surat-card-desc">
-                    Surat untuk menerangkan bahwa sebuah usaha terdaftar dalam administratif desa.
-                </div>
-            </a>
-            
-            <a href="{{ route('surat.create', ['jenis' => 'tidak-mampu']) }}" class="surat-card">
-                <div class="surat-card-header">
-                    <div class="surat-card-title">Surat Ket. Tidak Mampu</div>
-                    <i class="ti ti-chevron-right text-muted"></i>
-                </div>
-                <div class="surat-card-desc">
-                    Surat pengantar bagi warga kurang mampu untuk keperluan administrasi tertentu.
-                </div>
-            </a>
-
-            <a href="{{ route('surat.create', ['jenis' => 'nikah']) }}" class="surat-card">
-                <div class="surat-card-header">
-                    <div class="surat-card-title">Surat Pengantar Nikah</div>
-                    <i class="ti ti-chevron-right text-muted"></i>
-                </div>
-                <div class="surat-card-desc">
-                    Surat pengantar untuk melengkapi persyaratan pernikahan warga.
-                </div>
-            </a>
+            @if(isset($templates) && $templates->isEmpty())
+                <p style="color: #64748b; font-size: 14px;">Belum ada template surat yang ditambahkan. Silakan tambahkan melalui menu Template Surat.</p>
+            @endif
         </div>
     </div>
 @endsection

@@ -71,7 +71,83 @@ class SuratController extends Controller
 
         $pengaturan = Pengaturan::first();
 
-        return view('surat.print', compact('surat', 'validated', 'pengaturan'));
+        // Ambil template dari database
+        $template = \App\Models\TemplateSurat::where('jenis_surat', $validated['jenis'])->first();
+        $processed_content = '';
+
+        if ($template) {
+            $processed_content = $template->konten;
+            
+            // Lakukan string replacement
+            $replacements = [
+                '[NAMA]' => strtoupper($validated['nama']),
+                '[NIK]' => $validated['nik'],
+                '[NO_KK]' => $penduduk->no_kk ?? '-',
+                '[DUKUH]' => $penduduk->dukuh ?? '-',
+                '[RW]' => $penduduk->rw ?? '-',
+                '[RT]' => $penduduk->rt ?? '-',
+                '[HUB_KEL]' => $penduduk->hub_kel ?? '-',
+                '[JENIS_KEL]' => $validated['jenis_kelamin'],
+                '[JENIS_KELAMIN]' => $validated['jenis_kelamin'],
+                '[AGAMA]' => $validated['agama'],
+                '[PEKERJAAN]' => $validated['pekerjaan'],
+                '[TEMP_LAHIR]' => $validated['tempat_lahir'],
+                '[TEMPAT_LAHIR]' => $validated['tempat_lahir'],
+                '[TGL_LAHIR]' => \Carbon\Carbon::parse($validated['tanggal_lahir'])->format('d-m-Y'),
+                '[TANGGAL_LAHIR]' => \Carbon\Carbon::parse($validated['tanggal_lahir'])->format('d-m-Y'),
+                '[USIA]' => $penduduk->usia ?? '-',
+                '[STS_KWN]' => $validated['status_perkawinan'],
+                '[STATUS_PERKAWINAN]' => $validated['status_perkawinan'],
+                '[KEWARGANEGARAAN]' => 'WNI',
+                '[ALAMAT]' => $validated['alamat'],
+                '[JABATAN_KADES]' => $pengaturan->jabatan_kades ?? 'Kepala Desa',
+                '[NAMA_DESA]' => ucwords(strtolower(str_replace('DESA ', '', $pengaturan->nama_desa ?? 'Jangglengan'))),
+                '[KETERANGAN_TAMBAHAN]' => !empty($validated['keterangan']) ? $validated['keterangan'] : '',
+            ];
+
+            // Keperluan Block
+            $keperluanBlock = '';
+            if(!empty($validated['keperluan'])) {
+                $keperluanBlock = '<p style="text-indent: 1cm; margin-top: 10px;">Adapun surat keterangan ini diberikan untuk keperluan: <strong>' . $validated['keperluan'] . '</strong>.</p>';
+            }
+            $replacements['[KEPERLUAN_BLOCK]'] = $keperluanBlock;
+
+            foreach ($replacements as $key => $val) {
+                $processed_content = str_replace($key, $val, $processed_content);
+            }
+        } else {
+            // Fallback content jika template tidak ada
+            $processed_content = '<p>Template surat tidak ditemukan. Silakan tambahkan template untuk jenis surat ini di menu Template Surat.</p>';
+        }
+
+        return view('surat.editor', compact('surat', 'validated', 'pengaturan', 'processed_content'));
+    }
+
+    public function printFinal(Request $request)
+    {
+        $validated = $request->validate([
+            'penduduk_id' => 'required',
+            'jenis' => 'required',
+            'keperluan' => 'nullable',
+            'nomor_surat' => 'required',
+            'staf_id' => 'required',
+            'edited_content' => 'required', // The raw HTML from TinyMCE
+        ]);
+
+        $penduduk = Penduduk::findOrFail($validated['penduduk_id']);
+        
+        $surat = new Surat([
+            'nomor_surat' => $validated['nomor_surat'],
+            'penduduk_id' => $validated['penduduk_id'],
+            'jenis_surat' => $validated['jenis'],
+            'keperluan' => $validated['keperluan'],
+            'tanggal_cetak' => now(),
+        ]);
+
+        $pengaturan = Pengaturan::first();
+        
+        // Pass original values to be printed in header/footer, and edited_content for the body
+        return view('surat.print', compact('surat', 'validated', 'pengaturan', 'penduduk'));
     }
 
     public function storeHistory(Request $request)

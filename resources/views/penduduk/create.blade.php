@@ -89,11 +89,11 @@
             </div>
             <div class="form-group">
                 <label>Tanggal Lahir <span style="color:red">*</span></label>
-                <input type="date" name="tanggal_lahir" class="form-control" value="{{ old('tanggal_lahir') }}" required>
+                <input type="date" name="tanggal_lahir" id="tanggal_lahir" class="form-control" value="{{ old('tanggal_lahir') }}" required>
             </div>
             <div class="form-group">
                 <label>Usia</label>
-                <input type="number" name="usia" class="form-control" value="{{ old('usia') }}" placeholder="Contoh: 35">
+                <input type="number" name="usia" id="usia" class="form-control" value="{{ old('usia') }}" placeholder="Otomatis terisi" readonly style="background-color: #f3f4f6; cursor: not-allowed;">
             </div>
 
             <div class="form-group">
@@ -160,4 +160,28 @@
         </div>
     </form>
 </div>
+@endsection
+
+@section('scripts')
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const tglLahirInput = document.getElementById('tanggal_lahir');
+        const usiaInput = document.getElementById('usia');
+
+        tglLahirInput.addEventListener('change', function() {
+            if (this.value) {
+                const birthDate = new Date(this.value);
+                const today = new Date();
+                let age = today.getFullYear() - birthDate.getFullYear();
+                const m = today.getMonth() - birthDate.getMonth();
+                if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+                    age--;
+                }
+                usiaInput.value = age;
+            } else {
+                usiaInput.value = '';
+            }
+        });
+    });
+</script>
 @endsection

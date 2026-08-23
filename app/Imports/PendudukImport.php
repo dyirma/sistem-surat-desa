@@ -34,6 +34,8 @@ class PendudukImport implements ToModel, WithHeadingRow, WithChunkReading, WithB
 
     public function model(array $row)
     {
+        // NO, NIK, NO_KK, NAMA, DUKUH, RW, RT, HUB_KEL, JENIS_KEL, AGAMA, PEKERJAAN, TEMP_LAHIR, TGL. LAHIR, USIA, STS KWN
+
         // Skip baris jika NIK kosong
         if (empty($row['nik'])) {
             return null;

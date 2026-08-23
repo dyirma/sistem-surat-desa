@@ -125,10 +125,8 @@
 
             <hr style="border: 0; border-top: 1px solid var(--border-color); margin: 30px 0;">
 
-            <div style="display: flex; justify-content: flex-end; gap: 15px;">
-                <button type="submit" class="btn-submit" style="background-color: #0d6efd;">
-                    <i class="ti ti-printer"></i> Cetak Surat Langsung
-                </button>
+            <div style="text-align: right;">
+                <button type="submit" class="btn-submit" id="btn-cetak"><i class="ti ti-edit"></i> Review & Edit Surat</button>
             </div>
         </form>
     </div>
