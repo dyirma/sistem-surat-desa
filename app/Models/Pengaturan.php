@@ -12,6 +12,7 @@ class Pengaturan extends Model
         'nama_desa',
         'kode_pos',
         'alamat_desa',
+        'kode_desa',
         'email_desa',
         'website_desa',
         'jabatan_kades',

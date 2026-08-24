@@ -209,10 +209,14 @@
                 <textarea name="alamat_desa" class="form-control" rows="2" placeholder="Contoh: Jl. Raya Jangglengan No. 1">{{ old('alamat_desa', $pengaturan->alamat_desa ?? '') }}</textarea>
             </div>
             
-            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 24px;">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
                 <div class="form-group">
                     <label>Kode Pos</label>
                     <input type="text" name="kode_pos" class="form-control" value="{{ old('kode_pos', $pengaturan->kode_pos ?? '') }}" placeholder="Contoh: 57571">
+                </div>
+                <div class="form-group">
+                    <label>Kode Desa / Kelurahan</label>
+                    <input type="text" name="kode_desa" class="form-control" value="{{ old('kode_desa', $pengaturan->kode_desa ?? '') }}" placeholder="Contoh: 33110520002">
                 </div>
                 <div class="form-group">
                     <label>Email</label>

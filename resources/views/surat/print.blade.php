@@ -75,10 +75,10 @@
             </div>
         </div>
         
-        @if(isset($surat) && $surat->jenis_surat === 'pengantar')
+        @if(isset($surat) && $surat->jenis_surat === 'pengantar' && isset($pengaturan) && $pengaturan->kode_desa)
             <div style="font-size: 11pt; margin-top: 8px; line-height: 1.2;">
                 <div>No. Kode Desa/ Kelurahan</div>
-                <div>33110520002</div>
+                <div>{{ $pengaturan->kode_desa }}</div>
             </div>
         @endif
 
@@ -184,7 +184,7 @@
                         <td></td>
                     </tr>
                     <tr>
-                        <td style="font-weight: bold; text-decoration: underline; text-transform: uppercase;">{{ $validated['nama'] }}</td>
+                        <td style="font-weight: bold; text-decoration: underline; text-transform: uppercase;">{{ isset($penduduk) ? $penduduk->nama : ($validated['nama'] ?? '') }}</td>
                         <td>....................................</td>
                         <td style="font-weight: bold; text-decoration: underline;">
                             @if($validated['staf_id'] == 'sekdes')
