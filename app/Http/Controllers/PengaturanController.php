@@ -22,6 +22,7 @@ class PengaturanController extends Controller
             'nama_desa' => 'required',
             'kode_pos' => 'nullable',
             'alamat_desa' => 'required',
+            'kode_desa' => 'nullable',
             'email_desa' => 'nullable|email',
             'website_desa' => 'nullable',
             'logo' => 'nullable|image|mimes:jpeg,png,jpg|max:10240',
@@ -33,6 +34,7 @@ class PengaturanController extends Controller
         $pengaturan->nama_desa = $validated['nama_desa'];
         $pengaturan->kode_pos = $validated['kode_pos'] ?? null;
         $pengaturan->alamat_desa = $validated['alamat_desa'];
+        $pengaturan->kode_desa = $validated['kode_desa'] ?? null;
         $pengaturan->email_desa = $validated['email_desa'] ?? null;
         $pengaturan->website_desa = $validated['website_desa'] ?? null;
 
