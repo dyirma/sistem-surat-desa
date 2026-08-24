@@ -4,11 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cetak Surat {{ str_replace('-', ' ', ucwords($surat->jenis_surat ?? '')) }} | SURAJA - Desa Jangglengan</title>
-    @php
-        $pengaturan = \App\Models\Pengaturan::first();
-        $favicon = ($pengaturan && $pengaturan->logo_path) ? asset($pengaturan->logo_path) : asset('assets/img/default-logo.png');
-    @endphp
-    <link rel="icon" type="image/png" href="{{ $favicon }}">
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="{{ asset('assets/img/logo-suraja-warna.png') }}">
     <style>
         body { font-family: 'Times New Roman', Times, serif; font-size: 12pt; line-height: 1.5; color: black; margin: 0; padding: 0; background: #e5e7eb; }
         .page { background: white; width: 21cm; min-height: 29.7cm; padding: 2cm 2cm 2cm 2.5cm; margin: 20px auto; box-shadow: 0 0 10px rgba(0,0,0,0.1); box-sizing: border-box; position: relative; }
@@ -57,10 +54,10 @@
             $pengaturan = \App\Models\Pengaturan::first();
         @endphp
         <div class="kop-surat">
-            @if($pengaturan && $pengaturan->logo_path)
-                <img src="{{ asset($pengaturan->logo_path) }}" alt="Logo" style="width: 2.5cm; position: absolute; left: 0; top: -15px;">
+            @if(isset($pengaturan) && $pengaturan->logo_path)
+                <img src="{{ asset($pengaturan->logo_path) }}" alt="Logo Kabupaten" style="width: 2.5cm; position: absolute; left: 0; top: -15px;">
             @endif
-            <div style="flex: 1; padding-left: {{ ($pengaturan && $pengaturan->logo_path) ? '3cm' : '0' }};">
+            <div style="flex: 1; padding-left: {{ (isset($pengaturan) && $pengaturan->logo_path) ? '3cm' : '0' }};">
                 <h1>PEMERINTAH KABUPATEN SUKOHARJO</h1>
                 <h1>KECAMATAN NGUTER</h1>
                 <h2>{{ strtoupper($pengaturan->nama_desa ?? 'DESA JANGGLENGAN') }}</h2>
