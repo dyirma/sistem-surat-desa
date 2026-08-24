@@ -3,7 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SimpelDesa - @yield('title')</title>
+<<<<<<< HEAD
+    <meta name="description" content="Layanan tata naskah dan administrasi persuratan resmi Pemerintah Desa Jangglengan, Kec. Nguter, Kab. Sukoharjo.">
+    <meta property="og:title" content="@yield('title', 'Beranda') | SURAJA - Desa Jangglengan">
+    <meta property="og:description" content="Layanan tata naskah dan administrasi persuratan resmi Pemerintah Desa Jangglengan.">
+    <meta property="og:type" content="website">
+    <title>@yield('title', 'Beranda') | SURAJA - Desa Jangglengan</title>
+    
+    <!-- Favicon dinamis mengambil dari logo_path atau default -->
+    @php
+        $pengaturan = \App\Models\Pengaturan::first();
+        $favicon = ($pengaturan && $pengaturan->logo_path) ? asset($pengaturan->logo_path) : asset('assets/img/default-logo.png');
+    @endphp
+    <link rel="icon" type="image/png" href="{{ $favicon }}">
+
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('css/style.css') }}">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
@@ -18,10 +31,22 @@
     <div class="app-container" x-data="{ sidebarOpen: true }">
         <!-- Sidebar -->
         <aside class="sidebar" :class="{ 'collapsed': !sidebarOpen }">
-            <div class="sidebar-header" @click="sidebarOpen = !sidebarOpen" style="cursor: pointer;" title="Toggle Sidebar">
-                <i class="ti ti-home-shield" style="font-size: 28px; color: var(--primary-color);"></i>
-                <h2 class="menu-text" style="font-size: 18px; font-weight: 700; margin:0;">SimpelDesa</h2>
+            <div class="sidebar-header" @click="sidebarOpen = !sidebarOpen" style="cursor: pointer; flex-direction: column; align-items: flex-start; gap: 10px; padding: 20px;" title="Toggle Sidebar">
+                <!-- Logo Desa Wisata (Web Branding) -->
+                @if(file_exists(public_path('assets/img/logo-wisata-jangglengan.png')))
+                    <img src="{{ asset('assets/img/logo-wisata-jangglengan.png') }}" alt="Desa Wisata" class="menu-text" style="width: 100%; max-width: 180px; object-fit: contain;">
+                @else
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        @if($pengaturan && $pengaturan->logo_path)
+                            <img src="{{ $favicon }}" alt="Logo" style="width: 32px; height: 32px; object-fit: contain;">
+                        @else
+                            <i class="ti ti-building-bank" style="font-size: 28px; color: var(--primary-color);"></i>
+                        @endif
+                        <h2 class="menu-text" style="font-size: 18px; font-weight: 700; margin:0;">SURAJA</h2>
+                    </div>
+                @endif
             </div>
+
             
             <div class="sidebar-menu">
                 <div class="menu-group-title menu-text">Menu Utama</div>

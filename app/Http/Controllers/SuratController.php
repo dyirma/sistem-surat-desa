@@ -42,6 +42,9 @@ class SuratController extends Controller
             'keterangan' => 'nullable|string',
             'nomor_surat' => 'required|string',
             'staf_id' => 'required|string',
+            'data_tambahan' => 'nullable|array',
+            'berlaku_dari' => 'nullable|date',
+            'berlaku_sampai' => 'nullable|date',
         ]);
 
         $penduduk = Penduduk::findOrFail($validated['penduduk_id']);
@@ -75,6 +78,40 @@ class SuratController extends Controller
         $template = \App\Models\TemplateSurat::where('jenis_surat', $validated['jenis'])->first();
         $processed_content = '';
 
+        // Logic for Masa Berlaku
+        if (!empty($validated['berlaku_dari'])) {
+            \Carbon\Carbon::setLocale('id');
+            $dari = \Carbon\Carbon::parse($validated['berlaku_dari'])->translatedFormat('d F Y');
+            $sampai = !empty($validated['berlaku_sampai']) ? \Carbon\Carbon::parse($validated['berlaku_sampai'])->translatedFormat('d F Y') : 'Selesai';
+            
+            // Masukkan ke array data_tambahan agar otomatis tercetak di tabel dinamis
+            if (!isset($validated['data_tambahan'])) {
+                $validated['data_tambahan'] = [];
+            }
+            $validated['data_tambahan']['masa_berlaku'] = $dari . ' s/d ' . $sampai;
+        }
+
+        // Map Jenis Kelamin
+        $jk_map = ['L' => 'Laki-Laki', 'P' => 'Perempuan'];
+        $jk_formatted = $jk_map[strtoupper($validated['jenis_kelamin'])] ?? $validated['jenis_kelamin'];
+
+        // Map Status Perkawinan
+        $kwn_map = ['B' => 'Belum Kawin', 'S' => 'Kawin', 'C' => 'Cerai Hidup', 'M' => 'Cerai Mati'];
+        $kwn_formatted = $kwn_map[strtoupper($validated['status_perkawinan'])] ?? $validated['status_perkawinan'];
+
+        // Build HTML for data_tambahan
+        $htmlTambahan = '';
+        if (isset($validated['data_tambahan']) && is_array($validated['data_tambahan'])) {
+            $nomor = $validated['jenis'] === 'pengantar' ? 7 : 9; // Lanjutan numbering tabel (Pak Carik 1-6, Standard 1-8)
+            foreach ($validated['data_tambahan'] as $k => $v) {
+                $label = ucwords(str_replace('_', ' ', $k));
+                // Jangan ALL CAPS untuk masa_berlaku agar tidak aneh
+                $value = $k === 'masa_berlaku' ? $v : ucwords(strtolower($v)); 
+                $htmlTambahan .= '<tr><td style="padding: 4px 0; vertical-align: top;">'.$nomor.'.</td><td style="padding: 4px 0; vertical-align: top;">' . $label . '</td><td style="padding: 4px 0; vertical-align: top; text-align: center;">:</td><td style="padding: 4px 0; vertical-align: top;">' . $value . '</td></tr>';
+                $nomor++;
+            }
+        }
+
         if ($template) {
             $processed_content = $template->konten;
             
@@ -87,22 +124,23 @@ class SuratController extends Controller
                 '[RW]' => $penduduk->rw ?? '-',
                 '[RT]' => $penduduk->rt ?? '-',
                 '[HUB_KEL]' => $penduduk->hub_kel ?? '-',
-                '[JENIS_KEL]' => $validated['jenis_kelamin'],
-                '[JENIS_KELAMIN]' => $validated['jenis_kelamin'],
-                '[AGAMA]' => $validated['agama'],
-                '[PEKERJAAN]' => $validated['pekerjaan'],
-                '[TEMP_LAHIR]' => $validated['tempat_lahir'],
-                '[TEMPAT_LAHIR]' => $validated['tempat_lahir'],
+                '[JENIS_KEL]' => $jk_formatted,
+                '[JENIS_KELAMIN]' => $jk_formatted,
+                '[AGAMA]' => ucwords(strtolower($validated['agama'])),
+                '[PEKERJAAN]' => ucwords(strtolower($validated['pekerjaan'])),
+                '[TEMP_LAHIR]' => ucwords(strtolower($validated['tempat_lahir'])),
+                '[TEMPAT_LAHIR]' => ucwords(strtolower($validated['tempat_lahir'])),
                 '[TGL_LAHIR]' => \Carbon\Carbon::parse($validated['tanggal_lahir'])->format('d-m-Y'),
                 '[TANGGAL_LAHIR]' => \Carbon\Carbon::parse($validated['tanggal_lahir'])->format('d-m-Y'),
                 '[USIA]' => $penduduk->usia ?? '-',
-                '[STS_KWN]' => $validated['status_perkawinan'],
-                '[STATUS_PERKAWINAN]' => $validated['status_perkawinan'],
+                '[STS_KWN]' => $kwn_formatted,
+                '[STATUS_PERKAWINAN]' => $kwn_formatted,
                 '[KEWARGANEGARAAN]' => 'WNI',
                 '[ALAMAT]' => $validated['alamat'],
                 '[JABATAN_KADES]' => $pengaturan->jabatan_kades ?? 'Kepala Desa',
                 '[NAMA_DESA]' => ucwords(strtolower(str_replace('DESA ', '', $pengaturan->nama_desa ?? 'Jangglengan'))),
                 '[KETERANGAN_TAMBAHAN]' => !empty($validated['keterangan']) ? $validated['keterangan'] : '',
+                '[DATA_TAMBAHAN]' => $htmlTambahan,
             ];
 
             // Keperluan Block
@@ -117,7 +155,22 @@ class SuratController extends Controller
             }
         } else {
             // Fallback content jika template tidak ada
-            $processed_content = '<p>Template surat tidak ditemukan. Silakan tambahkan template untuk jenis surat ini di menu Template Surat.</p>';
+            $processed_content = '<p>Yang bertanda tangan di bawah ini menerangkan bahwa:</p>';
+            $processed_content .= '<table style="margin: 10px 0 10px 1.5cm; width: calc(100% - 1.5cm); border-collapse: collapse;">';
+            $processed_content .= '<tr><td style="width: 35%; padding: 4px 0; vertical-align: top;">Nama</td><td style="width: 5%; text-align: center; vertical-align: top;">:</td><td style="padding: 4px 0; vertical-align: top;">' . strtoupper($validated['nama']) . '</td></tr>';
+            $processed_content .= '<tr><td style="padding: 4px 0; vertical-align: top;">NIK</td><td style="text-align: center; vertical-align: top;">:</td><td style="padding: 4px 0; vertical-align: top;">' . $validated['nik'] . '</td></tr>';
+            $processed_content .= '<tr><td style="padding: 4px 0; vertical-align: top;">Alamat</td><td style="text-align: center; vertical-align: top;">:</td><td style="padding: 4px 0; vertical-align: top;">' . $validated['alamat'] . '</td></tr>';
+            $processed_content .= '</table>';
+            
+            if ($htmlTambahan != '') {
+                $processed_content .= '<p style="margin-top: 15px;">Adapun data tambahan terkait keterangan ini adalah sebagai berikut:</p>';
+                $processed_content .= $htmlTambahan;
+            }
+            
+            if(!empty($validated['keperluan'])) {
+                $processed_content .= '<p style="text-indent: 1cm; margin-top: 15px;">Adapun surat keterangan ini diberikan untuk keperluan: <strong>' . $validated['keperluan'] . '</strong>.</p>';
+            }
+            $processed_content .= '<p style="text-indent: 1cm; margin-top: 15px;">Demikian surat keterangan ini dibuat agar dapat dipergunakan sebagaimana mestinya.</p>';
         }
 
         return view('surat.editor', compact('surat', 'validated', 'pengaturan', 'processed_content'));
@@ -132,6 +185,7 @@ class SuratController extends Controller
             'nomor_surat' => 'required',
             'staf_id' => 'required',
             'edited_content' => 'required', // The raw HTML from TinyMCE
+            'data_tambahan' => 'nullable|array',
         ]);
 
         $penduduk = Penduduk::findOrFail($validated['penduduk_id']);
@@ -143,6 +197,11 @@ class SuratController extends Controller
             'keperluan' => $validated['keperluan'],
             'tanggal_cetak' => now(),
         ]);
+
+        // Temporarily store it so it can be picked up by the view
+        if(isset($validated['data_tambahan'])) {
+            $surat->data_tambahan = $validated['data_tambahan'];
+        }
 
         $pengaturan = Pengaturan::first();
         
@@ -157,6 +216,7 @@ class SuratController extends Controller
             'penduduk_id' => $request->penduduk_id,
             'jenis_surat' => $request->jenis_surat,
             'keperluan' => $request->keperluan,
+            'data_tambahan' => $request->data_tambahan, // This will be cast to JSON if Model is set
             'tanggal_cetak' => now(),
         ]);
         return response()->json(['success' => true]);
