@@ -11,7 +11,12 @@ class Surat extends Model
         'penduduk_id',
         'jenis_surat',
         'keperluan',
+        'data_tambahan',
         'tanggal_cetak',
+    ];
+
+    protected $casts = [
+        'data_tambahan' => 'array',
     ];
 
     public function penduduk()

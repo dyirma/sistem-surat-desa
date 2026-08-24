@@ -123,6 +123,9 @@
                 </select>
             </div>
 
+            <!-- Dynamic Fields Container -->
+            <div id="dynamic-fields-container"></div>
+
             <hr style="border: 0; border-top: 1px solid var(--border-color); margin: 30px 0;">
 
             <div style="text-align: right;">
@@ -138,6 +141,33 @@
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script>
     $(document).ready(function() {
+        var jenisSurat = '{{ strtolower(str_replace(' ', '-', $jenis)) }}';
+        var dynamicContainer = $('#dynamic-fields-container');
+        var html = '';
+
+        if (jenisSurat === 'usaha') {
+            html += '<div class="form-group">';
+            html += '<label>Nama Usaha <span style="color: red;">*</span></label>';
+            html += '<input type="text" name="data_tambahan[nama_usaha]" class="form-control" required>';
+            html += '</div>';
+            html += '<div class="form-group">';
+            html += '<label>Bidang/Jenis Usaha <span style="color: red;">*</span></label>';
+            html += '<input type="text" name="data_tambahan[bidang_usaha]" class="form-control" required>';
+            html += '</div>';
+        } else if (jenisSurat === 'tidak-mampu') {
+            html += '<div class="form-group">';
+            html += '<label>Tujuan Bantuan <span style="color: red;">*</span></label>';
+            html += '<input type="text" name="data_tambahan[tujuan_bantuan]" class="form-control" placeholder="Contoh: Beasiswa Sekolah, Pengobatan, dll" required>';
+            html += '</div>';
+        } else if (jenisSurat === 'pengantar') {
+            html += '<div class="form-group">';
+            html += '<label>Tujuan Instansi/Pihak <span style="color: red;">*</span></label>';
+            html += '<input type="text" name="data_tambahan[tujuan]" class="form-control" placeholder="Contoh: Ke Muhammad Berlian Aji, Citra Garden" required>';
+            html += '</div>';
+        }
+        
+        dynamicContainer.html(html);
+
         $('.select2').select2({
             width: '100%',
             placeholder: "-- Ketik minimal 3 huruf NIK/Nama --",
