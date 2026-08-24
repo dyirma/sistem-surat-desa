@@ -33,7 +33,7 @@
     </div>
 
     @if(session('success'))
-        <div style="background: #dcfce7; color: #166534; padding: 15px; border-radius: 8px; margin-top: 20px;">
+        <div style="background: #dcfce7; color: #166534; padding: 15px; border-radius: 50px; margin-top: 20px;">
             {{ session('success') }}
         </div>
     @endif
@@ -47,19 +47,19 @@
                     <th>L/P</th>
                     <th>Tgl Lahir</th>
                     <th>Pekerjaan</th>
-                    <th>Aksi</th>
+                    <th style="width: 1%; white-space: nowrap;">Aksi</th>
                 </tr>
             </thead>
             <tbody>
                 @forelse($penduduks as $p)
                 <tr>
-                    <td>{{ $p->nik }}</td>
-                    <td style="font-weight: 500;">{{ $p->nama }}</td>
+                    <td style="font-size: 15px;">{{ $p->nik }}</td>
+                    <td>{{ $p->nama }}</td>
                     <td>{{ substr($p->jenis_kelamin, 0, 1) }}</td>
                     <td>{{ \Carbon\Carbon::parse($p->tanggal_lahir)->format('d M Y') }}</td>
                     <td>{{ $p->pekerjaan }}</td>
-                    <td>
-                        <div class="action-btns">
+                    <td style="white-space: nowrap;">
+                        <div class="action-btns" style="justify-content: center;">
                             <a href="{{ route('penduduk.edit', $p->id) }}" class="btn btn-sm btn-warning">Edit</a>
                             <form action="{{ route('penduduk.destroy', $p->id) }}" method="POST" onsubmit="return confirm('Yakin hapus data ini?')">
                                 @csrf

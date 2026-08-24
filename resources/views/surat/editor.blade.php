@@ -10,7 +10,7 @@
         color: white;
         border: none;
         padding: 12px 24px;
-        border-radius: 6px;
+        border-radius: 50px;
         font-weight: 600;
         cursor: pointer;
         font-size: 15px;

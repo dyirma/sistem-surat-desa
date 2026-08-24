@@ -17,7 +17,7 @@
         width: 100%;
         padding: 10px 15px;
         border: 1px solid var(--border-color);
-        border-radius: 6px;
+        border-radius: 20px;
         font-family: inherit;
         font-size: 15px;
     }
@@ -30,7 +30,7 @@
         color: white;
         border: none;
         padding: 12px 24px;
-        border-radius: 6px;
+        border-radius: 50px;
         font-weight: 600;
         cursor: pointer;
         font-size: 15px;
@@ -53,7 +53,7 @@
 
 <div class="dashboard-card">
     @if ($errors->any())
-        <div style="padding: 15px; background: #fee2e2; color: #b91c1c; border-radius: 6px; margin-bottom: 20px;">
+        <div style="padding: 15px; background: #fee2e2; color: #b91c1c; border-radius: 20px; margin-bottom: 20px;">
             <ul style="margin: 0; padding-left: 20px;">
                 @foreach ($errors->all() as $error)
                     <li>{{ $error }}</li>

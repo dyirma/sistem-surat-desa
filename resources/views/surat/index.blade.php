@@ -8,7 +8,7 @@
         </div>
     </div>
     <!-- Search Bar (Visual Only for this screen) -->
-    <div style="margin-top: 20px; background: white; padding: 12px 20px; border-radius: 8px; border: 1px solid var(--border-color); display: flex; align-items: center; gap: 10px;">
+    <div style="margin-top: 20px; background: white; padding: 12px 20px; border-radius: 50px; border: 1px solid var(--border-color); display: flex; align-items: center; gap: 10px;">
         <i class="ti ti-search text-muted"></i>
         <input type="text" placeholder="Cari jenis surat yang Anda inginkan..." style="border: none; outline: none; width: 100%; font-size: 15px; font-family: inherit;">
     </div>

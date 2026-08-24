@@ -18,7 +18,7 @@
         width: 100%;
         padding: 12px 16px;
         border: 1px solid #cbd5e1;
-        border-radius: 8px;
+        border-radius: 20px;
         font-family: inherit;
         font-size: 15px;
         transition: all 0.2s ease;
@@ -118,7 +118,7 @@
         cursor: pointer;
         padding: 12px 20px;
         border: 1px solid #e2e8f0;
-        border-radius: 8px;
+        border-radius: 20px;
         background: white;
         transition: all 0.2s;
     }
@@ -145,12 +145,12 @@
 
 <div class="dashboard-card" style="padding: 30px;">
     @if(session('success'))
-        <div style="padding: 16px 20px; background: #dcfce7; color: #166534; border-radius: 8px; margin-bottom: 25px; display: flex; align-items: center; gap: 10px; font-weight: 500;">
+        <div style="padding: 16px 20px; background: #dcfce7; color: #166534; border-radius: 50px; margin-bottom: 25px; display: flex; align-items: center; gap: 10px; font-weight: 500;">
             <i class="ti ti-circle-check" style="font-size: 20px;"></i> {{ session('success') }}
         </div>
     @endif
     @if ($errors->any())
-        <div style="padding: 16px 20px; background: #fee2e2; color: #b91c1c; border-radius: 8px; margin-bottom: 25px;">
+        <div style="padding: 16px 20px; background: #fee2e2; color: #b91c1c; border-radius: 50px; margin-bottom: 25px;">
             <div style="font-weight: 600; margin-bottom: 8px; display: flex; align-items: center; gap: 8px;">
                 <i class="ti ti-alert-circle"></i> Terdapat kesalahan pengisian:
             </div>
@@ -237,7 +237,7 @@
         <form action="{{ route('pengaturan.update_pejabat') }}" method="POST">
             @csrf
             
-            <div style="background: #f8fafc; padding: 24px; border-radius: 12px; border: 1px solid #e2e8f0; margin-bottom: 30px;">
+            <div style="background: #f8fafc; padding: 24px; border-radius: 50px; border: 1px solid #e2e8f0; margin-bottom: 30px;">
                 <h3 class="section-title" style="margin-bottom: 8px;">Otoritas Penandatanganan</h3>
                 <p style="font-size: 14px; color: #64748b; margin: 0;">Pilih pejabat yang saat ini berwenang menandatangani dokumen.</p>
                 
@@ -300,7 +300,7 @@
                 <label>Struktur Nomor Surat</label>
                 <input type="text" name="format_nomor_surat" class="form-control" value="{{ old('format_nomor_surat', $pengaturan->format_nomor_surat ?? '145/[NO_URUT]/[KODE_DESA]/[TAHUN]') }}" style="font-family: monospace; font-size: 16px; padding: 16px;">
                 
-                <div style="margin-top: 16px; padding: 16px 20px; background: #f8fafc; border-radius: 8px; border: 1px solid #e2e8f0;">
+                <div style="margin-top: 16px; padding: 16px 20px; background: #f8fafc; border-radius: 50px; border: 1px solid #e2e8f0;">
                     <span style="font-size: 14px; font-weight: 600; color: #475569;">Gunakan variabel berikut (huruf kapital):</span>
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 12px;">
                         <div style="font-size: 14px;"><code style="color: var(--primary-color); font-weight: 600;">[NO_URUT]</code> : Angka urut otomatis</div>
