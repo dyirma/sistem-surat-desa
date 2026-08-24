@@ -7,16 +7,16 @@
 <style>
     .form-group { margin-bottom: 20px; }
     .form-group label { display: block; margin-bottom: 8px; font-weight: 500; font-size: 14px; }
-    .form-control { width: 100%; padding: 10px 15px; border: 1px solid var(--border-color); border-radius: 6px; font-size: 15px; }
-    .btn-submit { background-color: var(--primary-color); color: white; border: none; padding: 12px 24px; border-radius: 6px; font-weight: 600; cursor: pointer; }
-    .btn-cancel { background-color: #f1f5f9; color: #475569; padding: 12px 24px; border-radius: 6px; font-weight: 600; text-decoration: none; margin-right: 10px; display: inline-block;}
+    .form-control { width: 100%; padding: 10px 15px; border: 1px solid var(--border-color); border-radius: 20px; font-size: 15px; }
+    .btn-submit { background-color: var(--primary-color); color: white; border: none; padding: 12px 24px; border-radius: 50px; font-weight: 600; cursor: pointer; }
+    .btn-cancel { background-color: #f1f5f9; color: #475569; padding: 12px 24px; border-radius: 50px; font-weight: 600; text-decoration: none; margin-right: 10px; display: inline-block;}
     .tox-notifications-container { display: none !important; }
     
     .variable-card {
-        background: #f8fafc; border: 1px solid var(--border-color); border-radius: 8px; padding: 15px; margin-bottom: 20px;
+        background: #f8fafc; border: 1px solid var(--border-color); border-radius: 20px; padding: 15px; margin-bottom: 20px;
     }
     .variable-badge {
-        display: inline-block; background: #e2e8f0; padding: 4px 8px; border-radius: 4px; font-family: monospace; font-size: 12px; margin: 0 4px 8px 0; cursor: pointer; color: #334155; border: 1px solid #cbd5e1;
+        display: inline-block; background: #e2e8f0; padding: 4px 8px; border-radius: 20px; font-family: monospace; font-size: 12px; margin: 0 4px 8px 0; cursor: pointer; color: #334155; border: 1px solid #cbd5e1;
     }
     .variable-badge:hover { background: #cbd5e1; }
 </style>
@@ -29,7 +29,7 @@
 </div>
 
 @if ($errors->any())
-    <div style="background-color: #fee2e2; color: #b91c1c; padding: 12px; border-radius: 6px; margin-bottom: 20px;">
+    <div style="background-color: #fee2e2; color: #b91c1c; padding: 12px; border-radius: 20px; margin-bottom: 20px;">
         <ul style="margin: 0; padding-left: 20px;">
             @foreach ($errors->all() as $error)
                 <li>{{ $error }}</li>

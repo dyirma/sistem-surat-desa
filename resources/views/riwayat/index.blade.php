@@ -22,12 +22,12 @@
             <tbody>
                 @forelse($riwayats as $r)
                 <tr>
-                    <td style="color: var(--text-muted);">{{ \Carbon\Carbon::parse($r->tanggal_cetak)->format('d M Y, H:i') }}</td>
-                    <td style="font-weight: 500;">{{ $r->nomor_surat }}</td>
+                    <td style="color: var(--text-muted);">{{ \Carbon\Carbon::parse($r->created_at)->format('d M Y, H:i') }}</td>
+                    <td>{{ $r->nomor_surat }}</td>
                     <td><span class="badge">{{ strtoupper(str_replace('-', ' ', $r->jenis_surat)) }}</span></td>
                     <td>
-                        <div style="font-weight: 500;">{{ $r->penduduk->nama ?? 'Tidak Diketahui' }}</div>
-                        <div style="font-size: 12px; color: var(--text-muted);">{{ $r->penduduk->nik ?? '-' }}</div>
+                        <div>{{ $r->penduduk->nama ?? 'Tidak Diketahui' }}</div>
+                        <div style="font-size: 13px; color: var(--text-muted);">{{ $r->penduduk->nik ?? '-' }}</div>
                     </td>
                     <td style="max-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="{{ $r->keperluan }}">{{ $r->keperluan ?: '-' }}</td>
                 </tr>

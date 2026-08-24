@@ -10,11 +10,11 @@
         
         .kop-surat { display: flex; align-items: center; justify-content: center; text-align: center; border-bottom: 3px solid black; padding-bottom: 10px; margin-bottom: 2px; position: relative; }
         .kop-surat::after { content: ''; position: absolute; bottom: -4px; left: 0; width: 100%; border-bottom: 1px solid black; } /* Double line effect */
-        .kop-surat h1 { font-size: 14pt; margin: 0; text-transform: uppercase; font-weight: bold; }
-        .kop-surat h2 { font-size: 18pt; margin: 0; text-transform: uppercase; font-weight: bold; letter-spacing: 1px; }
-        .kop-surat p { font-size: 11pt; margin: 4px 0 0; }
+        .kop-surat h1 { font-size: 14pt; margin: 0; text-transform: uppercase; font-weight: normal; line-height: 1.1; }
+        .kop-surat h2 { font-size: 16pt; margin: 2px 0; text-transform: uppercase; font-weight: bold; letter-spacing: 1px; line-height: 1.1; }
+        .kop-surat p { font-size: 11pt; margin: 0; line-height: 1.2; }
         
-        .judul-surat { text-align: center; margin: 30px 0 20px; }
+        .judul-surat { text-align: center; margin: 10px 0 15px; }
         .judul-surat h3 { font-size: 14pt; text-decoration: underline; margin: 0; text-transform: uppercase; font-weight: bold; }
         .judul-surat p { font-size: 12pt; margin: 5px 0 0; }
 
@@ -34,7 +34,7 @@
         .ttd-box .jabatan { font-weight: bold; margin-bottom: 80px; }
         .ttd-box .nama { font-weight: bold; text-decoration: underline; margin: 0; }
         
-        .btn-print { display: block; width: 21cm; margin: 20px auto; padding: 15px; background: #3b82f6; color: white; text-align: center; text-decoration: none; border-radius: 8px; font-family: sans-serif; font-weight: bold; cursor: pointer; border: none; font-size: 16px; }
+        .btn-print { display: block; width: 21cm; margin: 20px auto; padding: 15px; background: #3b82f6; color: white; text-align: center; text-decoration: none; border-radius: 50px; font-family: sans-serif; font-weight: bold; cursor: pointer; border: none; font-size: 16px; }
         
         @media print {
             @page { size: A4; margin: 0; }
@@ -53,14 +53,26 @@
         @endphp
         <div class="kop-surat">
             @if($pengaturan && $pengaturan->logo_path)
-                <img src="{{ asset($pengaturan->logo_path) }}" alt="Logo" style="width: 2cm; position: absolute; left: 0; top: 0;">
+                <img src="{{ asset($pengaturan->logo_path) }}" alt="Logo" style="width: 2.5cm; position: absolute; left: 0; top: -15px;">
             @endif
-            <div style="flex: 1; padding-left: {{ ($pengaturan && $pengaturan->logo_path) ? '2.5cm' : '0' }};">
-                <h1>PEMERINTAH KABUPATEN SUKOHARJO</h1>
-                <h1>KECAMATAN NGUTER</h1>
+            <div style="flex: 1; padding-left: {{ ($pengaturan && $pengaturan->logo_path) ? '3cm' : '0' }};">
+                <h1>PEMERINTAH KABUPATEN {{ strtoupper($pengaturan->nama_kabupaten ?? 'SUKOHARJO') }}</h1>
+                <h1>KECAMATAN {{ strtoupper($pengaturan->nama_kecamatan ?? 'NGUTER') }}</h1>
                 <h2>{{ strtoupper($pengaturan->nama_desa ?? 'DESA JANGGLENGAN') }}</h2>
-                <p>{{ $pengaturan->alamat_desa ?? 'Jangglengan, Kec. Nguter, Kabupaten Sukoharjo, Jawa Tengah' }}</p>
+                <p>{{ $pengaturan->alamat_desa ?? 'Jangglengan, Kec. Nguter, Kabupaten Sukoharjo, Jawa Tengah' }}@if($pengaturan && $pengaturan->kode_pos) Kode Pos: {{ $pengaturan->kode_pos }}@endif</p>
+                @if(($pengaturan && $pengaturan->email_desa) || ($pengaturan && $pengaturan->website_desa))
+                <p style="font-size: 10pt; margin-top: 2px;">
+                    @if($pengaturan->website_desa) Website: {{ $pengaturan->website_desa }} @endif
+                    @if($pengaturan->website_desa && $pengaturan->email_desa) | @endif
+                    @if($pengaturan->email_desa) Email: {{ $pengaturan->email_desa }} @endif
+                </p>
+                @endif
             </div>
+        </div>
+        
+        <div style="font-size: 11pt; margin-top: 8px; line-height: 1.2;">
+            <div>No. Kode Desa/ Kelurahan</div>
+            <div>33110520002</div>
         </div>
 
         <div class="judul-surat">
@@ -70,9 +82,29 @@
                 elseif($judul == 'usaha') $judul = 'Surat Keterangan Usaha';
                 elseif($judul == 'tidak mampu') $judul = 'Surat Keterangan Tidak Mampu';
                 elseif($judul == 'nikah') $judul = 'Surat Pengantar Nikah';
+                
+                $words = explode(' ', strtoupper($judul));
+                $firstWord = array_shift($words) ?? 'SURAT';
+                $secondWord = array_shift($words) ?? '';
+                $restWords = implode(' ', $words);
             @endphp
-            <h3>{{ strtoupper($judul) }}</h3>
-            <p>Nomor: {{ $surat->nomor_surat }}</p>
+            
+            <table style="margin: 0 auto; margin-bottom: 5px;">
+                <tr>
+                    <td rowspan="2" style="font-weight: bold; font-size: 14pt; padding-right: 15px; vertical-align: middle;">{{ $firstWord }}</td>
+                    <td style="font-weight: bold; font-size: 14pt; text-align: center; border-bottom: 2px solid black; padding-bottom: 2px;">{{ $secondWord }}</td>
+                </tr>
+                <tr>
+                    <td style="font-weight: bold; font-size: 14pt; text-align: center; padding-top: 2px;">{{ $restWords }}</td>
+                </tr>
+            </table>
+            
+            <table style="margin: 0 auto;">
+                <tr>
+                    <td style="width: 80px; text-align: left; font-size: 12pt;">Nomor</td>
+                    <td style="text-align: left; font-size: 12pt;">: {{ $surat->nomor_surat }}</td>
+                </tr>
+            </table>
         </div>
 
         <div class="isi-surat">

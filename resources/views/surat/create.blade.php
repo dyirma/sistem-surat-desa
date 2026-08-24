@@ -19,7 +19,7 @@
         width: 100%;
         padding: 10px 15px;
         border: 1px solid var(--border-color);
-        border-radius: 6px;
+        border-radius: 20px;
         font-family: inherit;
         font-size: 15px;
     }
@@ -32,7 +32,7 @@
     .select2-container--default .select2-selection--single {
         height: 42px;
         border: 1px solid var(--border-color);
-        border-radius: 6px;
+        border-radius: 20px;
         display: flex;
         align-items: center;
     }
@@ -50,7 +50,7 @@
         color: white;
         border: none;
         padding: 12px 24px;
-        border-radius: 6px;
+        border-radius: 50px;
         font-weight: 600;
         cursor: pointer;
         display: inline-flex;
