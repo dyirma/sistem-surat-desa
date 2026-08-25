@@ -47,6 +47,7 @@
         <input type="hidden" name="keperluan" value="{{ $validated['keperluan'] ?? '' }}">
         <input type="hidden" name="nomor_surat" value="{{ $validated['nomor_surat'] }}">
         <input type="hidden" name="staf_id" value="{{ $validated['staf_id'] }}">
+        <input type="hidden" name="format_ttd" value="{{ $validated['format_ttd'] ?? '1' }}">
         
         @if(isset($validated['data_tambahan']))
             @foreach($validated['data_tambahan'] as $key => $value)

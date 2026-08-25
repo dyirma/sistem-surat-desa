@@ -60,13 +60,11 @@
             <div style="flex: 1; padding-left: {{ (isset($pengaturan) && $pengaturan->logo_path) ? '3cm' : '0' }};">
                 <h1>PEMERINTAH KABUPATEN SUKOHARJO</h1>
                 <h1>KECAMATAN NGUTER</h1>
-                <h2>{{ strtoupper($pengaturan->nama_desa ?? 'DESA JANGGLENGAN') }}</h2>
-                <p>{{ $pengaturan->alamat_desa ?? 'Jangglengan, Kec. Nguter, Kabupaten Sukoharjo, Jawa Tengah' }}@if($pengaturan && $pengaturan->kode_pos) Kode Pos: {{ $pengaturan->kode_pos }}@endif</p>
+                <h2>DESA {{ strtoupper(str_replace('DESA ', '', $pengaturan->nama_desa ?? 'JANGGLENGAN')) }}</h2>
+                <p>Alamat : {{ $pengaturan->alamat_desa ?? 'Jl. Raya Pengkol-Tanjungrejo KM 2' }} Kode Pos {{ $pengaturan->kode_pos ?? '57571' }}</p>
                 @if(($pengaturan && $pengaturan->email_desa) || ($pengaturan && $pengaturan->website_desa))
                 <p style="font-size: 10pt; margin-top: 2px;">
-                    @if($pengaturan->website_desa) Website: {{ $pengaturan->website_desa }} @endif
-                    @if($pengaturan->website_desa && $pengaturan->email_desa) | @endif
-                    @if($pengaturan->email_desa) Email: {{ $pengaturan->email_desa }} @endif
+                    Laman {{ $pengaturan->website_desa ?? 'www.jangglengan-sukoharjo.desa.id' }} {{ $pengaturan->email_desa ?? 'jangglengannguter@gmail.com' }}
                 </p>
                 @endif
             </div>
@@ -149,24 +147,32 @@
                 <p class="penutup" style="margin-bottom: 30px;">Demikian surat keterangan ini dibuat dengan sebenarnya agar dapat dipergunakan sebagaimana mestinya.</p>
             @endif
         </div>
-        @if($surat->jenis_surat === 'pengantar')
-            <!-- Tanda Tangan 3 Kolom Khusus Pengantar -->
-            <div style="margin-top: 50px; text-align: right; width: 100%;">
+        @php
+            $formatTtd = $validated['format_ttd'] ?? '1';
+        @endphp
+
+        @if($formatTtd === '3' || $formatTtd === '2')
+            <!-- Tanda Tangan Multi Kolom -->
+            <div style="margin-top: 50px; text-align: center; width: 100%;">
                 <table style="width: 100%; border-collapse: collapse; text-align: center; page-break-inside: avoid;">
                     <tr>
-                        <td style="width: 33%;"></td>
-                        <td style="width: 33%;"></td>
-                        <td style="width: 34%; padding-bottom: 20px;">
+                        <td style="width: {{ $formatTtd === '3' ? '33%' : '50%' }};"></td>
+                        @if($formatTtd === '3')
+                            <td style="width: 33%;"></td>
+                        @endif
+                        <td style="width: {{ $formatTtd === '3' ? '34%' : '50%' }}; padding-bottom: 20px;">
                             {{ ucwords(strtolower(str_replace('DESA ', '', $pengaturan->nama_desa ?? 'Jangglengan'))) }}, {{ \Carbon\Carbon::parse($surat->tanggal_cetak)->format('d F Y') }}
                         </td>
                     </tr>
                     <tr>
-                        <td style="width: 33%;">Tanda Tangan Pemegang</td>
-                        <td style="width: 33%;">
-                            Mengetahui<br>
-                            Camat Nguter
-                        </td>
-                        <td style="width: 34%;">
+                        <td style="width: {{ $formatTtd === '3' ? '33%' : '50%' }};">Tanda Tangan Pemegang</td>
+                        @if($formatTtd === '3')
+                            <td style="width: 33%;">
+                                Mengetahui<br>
+                                Camat Nguter
+                            </td>
+                        @endif
+                        <td style="width: {{ $formatTtd === '3' ? '34%' : '50%' }};">
                             @if($validated['staf_id'] == 'sekdes')
                                 an.Pj.Kepala Desa Jangglengan<br>
                                 Sekretaris Desa
@@ -177,12 +183,16 @@
                     </tr>
                     <tr>
                         <td style="height: 80px;"></td>
-                        <td></td>
+                        @if($formatTtd === '3')
+                            <td></td>
+                        @endif
                         <td></td>
                     </tr>
                     <tr>
                         <td style="font-weight: bold; text-decoration: underline; text-transform: uppercase;">{{ isset($penduduk) ? $penduduk->nama : ($validated['nama'] ?? '') }}</td>
-                        <td>....................................</td>
+                        @if($formatTtd === '3')
+                            <td>....................................</td>
+                        @endif
                         <td style="font-weight: bold; text-decoration: underline;">
                             @if($validated['staf_id'] == 'sekdes')
                                 {{ strtoupper($pengaturan->nama_sekdes ?? 'NAMA SEKRETARIS DESA') }}
