@@ -42,8 +42,7 @@
                 </div>
             </div>
 
-            
-            <div class="sidebar-menu">
+            <div class="sidebar-menu" style="flex: 1;">
                 <div class="menu-group-title menu-text">Menu Utama</div>
                 
                 <a href="{{ route('dashboard') }}" class="menu-item {{ request()->routeIs('dashboard') ? 'active' : '' }}" title="Dashboard">
@@ -85,15 +84,29 @@
                     <i class="ti ti-settings" style="font-size: 20px;"></i>
                     <span class="menu-text">Pengaturan Sistem</span>
                 </a>
+
+                <div style="margin-top: auto; padding-bottom: 12px;">
+                    <style>
+                        .logout-item::after { display: none !important; }
+                    </style>
+                    <a href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();" class="menu-item logout-item" style="color: #fca5a5; margin-bottom: 0;" title="Logout">
+                        <i class="ti ti-logout" style="font-size: 20px;"></i>
+                        <span class="menu-text">Logout</span>
+                    </a>
+                    <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                        @csrf
+                    </form>
+                </div>
             </div>
         </aside>
 
         <!-- Main Content -->
         <main class="main-content">
             <header class="topbar">
-                <div style="display: flex; align-items: center; gap: 10px;">
-                    <img src="https://ui-avatars.com/api/?name=Admin+Desa&background=0D8ABC&color=fff" alt="Profile" style="width: 36px; border-radius: 50%;">
-                    <span style="font-size: 14px; font-weight: 500;">Admin Desa</span>
+                <div style="display: flex; align-items: center; justify-content: flex-end; width: 100%;">
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <span style="font-size: 14px; font-weight: 500;">Admin Desa Jangglengan</span>
+                    </div>
                 </div>
             </header>
             

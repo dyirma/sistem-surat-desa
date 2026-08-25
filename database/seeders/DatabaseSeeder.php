@@ -17,9 +17,13 @@ class DatabaseSeeder extends Seeder
     {
         // User::factory(10)->create();
 
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-        ]);
+        // Create Master Admin Account
+        User::updateOrCreate(
+            ['email' => 'jangglengannguter@gmail.com'],
+            [
+                'name' => 'Admin Desa Jangglengan',
+                'password' => bcrypt('@Sur4jadm1n19'),
+            ]
+        );
     }
 }
