@@ -39,9 +39,9 @@ class SuratController extends Controller
             'penduduk_id' => 'required|exists:penduduks,id',
             'jenis' => 'required',
             'keperluan' => 'nullable|string',
-            'keterangan' => 'nullable|string',
             'nomor_surat' => 'required|string',
             'staf_id' => 'required|string',
+            'format_ttd' => 'required|in:1,2,3',
             'data_tambahan' => 'nullable|array',
             'berlaku_dari' => 'nullable|date',
             'berlaku_sampai' => 'nullable|date',
@@ -115,6 +115,23 @@ class SuratController extends Controller
         if ($template) {
             $processed_content = $template->konten;
             
+            // Format Alamat Pintar
+            $rawAlamat = $validated['alamat'] ?? '';
+            $alamatClean = ucwords(strtolower($rawAlamat)); // Fix PUNTUKREJO -> Puntukrejo
+            $alamatClean = str_ireplace(['rt ', 'rw ', 'rt.', 'rw.', 'rt/', 'rt0', 'rt1', 'rt2', 'rt3', 'rt4', 'rt5', 'rt6', 'rt7', 'rt8', 'rt9'], 
+                                        ['RT ', 'RW ', 'RT.', 'RW.', 'RT/', 'RT 0', 'RT 1', 'RT 2', 'RT 3', 'RT 4', 'RT 5', 'RT 6', 'RT 7', 'RT 8', 'RT 9'], 
+                                        $alamatClean);
+            
+            // Jangan tambahkan RT/RW ganda jika admin sudah mengetiknya di database
+            if (!preg_match('/RT/i', $rawAlamat) && !preg_match('/RW/i', $rawAlamat)) {
+                $rtStr = sprintf('%02d', intval($penduduk->rt ?? 0));
+                $rwStr = sprintf('%02d', intval($penduduk->rw ?? 0));
+                $alamatClean .= ' RT ' . $rtStr . '/' . $rwStr;
+            }
+            
+            $desaName = ucwords(strtolower(str_replace('DESA ', '', strtoupper($pengaturan->nama_desa ?? 'Jangglengan'))));
+            $fullAlamat = $alamatClean . ' Ds ' . $desaName . ' Kec Nguter Kab Sukoharjo';
+
             // Lakukan string replacement
             $replacements = [
                 '[NAMA]' => strtoupper($validated['nama']),
@@ -136,7 +153,7 @@ class SuratController extends Controller
                 '[STS_KWN]' => $kwn_formatted,
                 '[STATUS_PERKAWINAN]' => $kwn_formatted,
                 '[KEWARGANEGARAAN]' => 'WNI',
-                '[ALAMAT]' => $validated['alamat'],
+                '[ALAMAT]' => $fullAlamat,
                 '[JABATAN_KADES]' => $pengaturan->jabatan_kades ?? 'Kepala Desa',
                 '[NAMA_DESA]' => ucwords(strtolower(str_replace('DESA ', '', $pengaturan->nama_desa ?? 'Jangglengan'))),
                 '[KETERANGAN_TAMBAHAN]' => !empty($validated['keterangan']) ? $validated['keterangan'] : '',
@@ -159,7 +176,7 @@ class SuratController extends Controller
             $processed_content .= '<table style="margin: 10px 0 10px 1.5cm; width: calc(100% - 1.5cm); border-collapse: collapse;">';
             $processed_content .= '<tr><td style="width: 35%; padding: 4px 0; vertical-align: top;">Nama</td><td style="width: 5%; text-align: center; vertical-align: top;">:</td><td style="padding: 4px 0; vertical-align: top;">' . strtoupper($validated['nama']) . '</td></tr>';
             $processed_content .= '<tr><td style="padding: 4px 0; vertical-align: top;">NIK</td><td style="text-align: center; vertical-align: top;">:</td><td style="padding: 4px 0; vertical-align: top;">' . $validated['nik'] . '</td></tr>';
-            $processed_content .= '<tr><td style="padding: 4px 0; vertical-align: top;">Alamat</td><td style="text-align: center; vertical-align: top;">:</td><td style="padding: 4px 0; vertical-align: top;">' . $validated['alamat'] . '</td></tr>';
+            $processed_content .= '<tr><td style="padding: 4px 0; vertical-align: top;">Tempat Tinggal</td><td style="text-align: center; vertical-align: top;">:</td><td style="padding: 4px 0; vertical-align: top;">' . $fullAlamat . '</td></tr>';
             $processed_content .= '</table>';
             
             if ($htmlTambahan != '') {
@@ -184,6 +201,7 @@ class SuratController extends Controller
             'keperluan' => 'nullable',
             'nomor_surat' => 'required',
             'staf_id' => 'required',
+            'format_ttd' => 'required|in:1,2,3',
             'edited_content' => 'required', // The raw HTML from TinyMCE
             'data_tambahan' => 'nullable|array',
         ]);

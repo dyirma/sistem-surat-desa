@@ -115,12 +115,22 @@
                 </div>
             </div>
 
-            <div class="form-group">
-                <label>Staf Pemerintah Desa (Penandatangan)</label>
-                <select name="staf_id" class="form-control" required>
-                    <option value="kades">{{ $pengaturan->jabatan_kades ?? 'Kepala Desa' }} ({{ $pengaturan->nama_kades ?? 'Nama Kades' }})</option>
-                    <option value="sekdes">An. {{ $pengaturan->jabatan_kades ?? 'Kepala Desa' }} {{ $pengaturan->nama_desa ?? '' }} - Sekdes ({{ $pengaturan->nama_sekdes ?? 'Nama Sekdes' }})</option>
-                </select>
+            <div style="display: flex; gap: 20px;">
+                <div class="form-group" style="flex: 1;">
+                    <label>Staf Pemerintah Desa (Penandatangan)</label>
+                    <select name="staf_id" class="form-control" required>
+                        <option value="kades">{{ $pengaturan->jabatan_kades ?? 'Kepala Desa' }} ({{ $pengaturan->nama_kades ?? 'Nama Kades' }})</option>
+                        <option value="sekdes">An. {{ $pengaturan->jabatan_kades ?? 'Kepala Desa' }} {{ $pengaturan->nama_desa ?? '' }} - Sekdes ({{ $pengaturan->nama_sekdes ?? 'Nama Sekdes' }})</option>
+                    </select>
+                </div>
+                <div class="form-group" style="flex: 1;">
+                    <label>Format Tanda Tangan</label>
+                    <select name="format_ttd" class="form-control" required>
+                        <option value="1">1 Kolom (Kades / Sekdes Saja)</option>
+                        <option value="2">2 Kolom (Pemohon & Kades / Sekdes)</option>
+                        <option value="3" {{ request('jenis') == 'pengantar' ? 'selected' : '' }}>3 Kolom (Pemohon, Mengetahui Camat, & Kades / Sekdes)</option>
+                    </select>
+                </div>
             </div>
 
             <!-- Dynamic Fields Container -->
