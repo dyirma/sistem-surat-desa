@@ -58,7 +58,7 @@ class TemplateSuratSeeder extends Seeder
     </tr>
     <tr>
         <td style="padding: 4px 0; vertical-align: top;">8.</td>
-        <td style="padding: 4px 0; vertical-align: top;">Tempat Tinggal / Alamat</td>
+        <td style="padding: 4px 0; vertical-align: top;">Tempat Tinggal</td>
         <td style="padding: 4px 0; vertical-align: top; text-align: center;">:</td>
         <td style="padding: 4px 0; vertical-align: top;">[ALAMAT]</td>
     </tr>

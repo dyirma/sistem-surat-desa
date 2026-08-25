@@ -13,9 +13,7 @@ Route::get('/', function () {
 
 // Protected Routes
 Route::middleware('auth')->group(function () {
-    Route::get('/dashboard', function () {
-        return view('dashboard');
-    })->name('dashboard');
+    Route::get('/dashboard', [\App\Http\Controllers\DashboardController::class, 'index'])->name('dashboard');
 
     Route::get('/surat', function () {
         $templates = \App\Models\TemplateSurat::all();
