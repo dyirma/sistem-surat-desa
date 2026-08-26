@@ -12,6 +12,7 @@ class Surat extends Model
         'jenis_surat',
         'keperluan',
         'data_tambahan',
+        'edited_content',
         'tanggal_cetak',
     ];
 

@@ -249,7 +249,8 @@
                     penduduk_id: '{{ $surat->penduduk_id }}',
                     jenis_surat: '{{ $surat->jenis_surat }}',
                     keperluan: '{{ addslashes($surat->keperluan) }}',
-                    data_tambahan: @json($surat->data_tambahan ?? null)
+                    data_tambahan: @json($surat->data_tambahan ?? null),
+                    edited_content: @json($validated['edited_content'] ?? '')
                 })
             }).then(response => {
                 isSaved = true; // prevent saving duplicate logs on multiple clicks
