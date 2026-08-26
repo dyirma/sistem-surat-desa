@@ -20,12 +20,7 @@
                     <i class="ti ti-upload"></i> Mulai Import
                 </button>
             </form>
-            <form action="{{ route('penduduk.truncate') }}" method="POST" onsubmit="return confirm('PERINGATAN BAHAYA: Anda yakin ingin mengosongkan SELURUH data penduduk (menghapus ribuan data sekaligus)?')">
-                @csrf
-                <button type="submit" class="btn btn-danger" style="display: flex; align-items: center; gap: 5px;">
-                    <i class="ti ti-trash"></i> Kosongkan Data
-                </button>
-            </form>
+
             <a href="{{ route('penduduk.create') }}" class="btn btn-primary">
                 <i class="ti ti-plus"></i> Tambah Penduduk
             </a>
@@ -37,6 +32,19 @@
             {{ session('success') }}
         </div>
     @endif
+
+    <div style="margin: 20px 0; display: flex; justify-content: flex-end;">
+        <form action="{{ route('penduduk.index') }}" method="GET" style="display: flex; align-items: center; background: white; border: 1px solid var(--border-color); border-radius: 50px; padding: 8px 15px; width: 100%; max-width: 400px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); transition: all 0.3s;" onfocusin="this.style.borderColor='var(--primary-color)'; this.style.boxShadow='0 0 0 3px rgba(var(--primary-color-rgb), 0.1)';" onfocusout="this.style.borderColor='var(--border-color)'; this.style.boxShadow='0 2px 4px rgba(0,0,0,0.02)';">
+            <i class="ti ti-search" style="color: var(--text-muted); font-size: 18px; margin-right: 10px;"></i>
+            <input type="text" name="search" value="{{ $search ?? '' }}" placeholder="Cari berdasarkan nama atau NIK warga..." style="border: none; outline: none; width: 100%; font-family: inherit; font-size: 14px; background: transparent; color: var(--text-color);">
+            @if(request('search'))
+                <a href="{{ route('penduduk.index') }}" title="Hapus Pencarian" style="color: #ef4444; text-decoration: none; display: flex; align-items: center; margin-left: 10px; padding: 4px; border-radius: 50%; transition: background 0.2s;" onmouseover="this.style.background='#fee2e2'" onmouseout="this.style.background='transparent'">
+                    <i class="ti ti-x" style="font-size: 16px;"></i>
+                </a>
+            @endif
+            <button type="submit" style="display: none;"></button>
+        </form>
+    </div>
 
     <div class="table-container">
         <table>
@@ -61,10 +69,12 @@
                     <td style="white-space: nowrap;">
                         <div class="action-btns" style="justify-content: center;">
                             <a href="{{ route('penduduk.edit', $p->id) }}" class="btn btn-sm btn-warning">Edit</a>
-                            <form action="{{ route('penduduk.destroy', $p->id) }}" method="POST" onsubmit="return confirm('Yakin hapus data ini?')">
+                            <form action="{{ route('penduduk.destroy', $p->id) }}" method="POST" onsubmit="return confirm('PERHATIAN: Apakah Anda yakin ingin menghapus data warga bernama {{ $p->nama }}? Tindakan ini tidak dapat dibatalkan.')">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="btn btn-sm btn-danger">Hapus</button>
+                                <button type="submit" style="background: none; border: none; padding: 6px; color: #9ca3af; cursor: pointer; border-radius: 4px; transition: all 0.2s; display: flex; align-items: center; justify-content: center;" onmouseover="this.style.color='#ef4444'; this.style.background='#fee2e2';" onmouseout="this.style.color='#9ca3af'; this.style.background='none';" title="Hapus Data Warga">
+                                    <i class="ti ti-trash" style="font-size: 18px;"></i>
+                                </button>
                             </form>
                         </div>
                     </td>
