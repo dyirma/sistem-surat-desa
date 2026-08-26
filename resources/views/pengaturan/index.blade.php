@@ -302,7 +302,7 @@
             
             <div class="form-group">
                 <label>Struktur Nomor Surat</label>
-                <input type="text" name="format_nomor_surat" class="form-control" value="{{ old('format_nomor_surat', $pengaturan->format_nomor_surat ?? '145/[NO_URUT]/[KODE_DESA]/[TAHUN]') }}" style="font-family: monospace; font-size: 16px; padding: 16px;">
+                <input type="text" name="format_nomor_surat" class="form-control" value="{{ old('format_nomor_surat', $pengaturan->format_nomor_surat ?? '470/[NO_URUT]/[BULAN]/[TAHUN]') }}" style="font-family: monospace; font-size: 16px; padding: 16px;">
                 
                 <div style="margin-top: 16px; padding: 16px 20px; background: #f8fafc; border-radius: 50px; border: 1px solid #e2e8f0;">
                     <span style="font-size: 14px; font-weight: 600; color: #475569;">Gunakan variabel berikut (huruf kapital):</span>

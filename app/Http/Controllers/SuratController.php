@@ -11,14 +11,28 @@ class SuratController extends Controller
 {
     public function create(Request $request)
     {
-        $jenis = $request->query('jenis', 'domisili');
-        
-        // Auto generate number (format: 470 / ID / DESA / YEAR)
+        $jenis = $request->jenis;
+        if (!$jenis || !\App\Models\TemplateSurat::where('jenis_surat', $jenis)->exists()) {
+            return redirect()->route('dashboard')->with('error', 'Jenis surat tidak ditemukan.');
+        }
+
         $lastSurat = Surat::whereYear('created_at', date('Y'))->orderBy('id', 'desc')->first();
         $nextId = $lastSurat ? $lastSurat->id + 1 : 1;
-        $nomor_surat = "470 / " . sprintf('%03d', $nextId) . " / DESA / " . date('Y');
+        $noUrut = sprintf('%03d', $nextId);
 
         $pengaturan = Pengaturan::first();
+        $format = $pengaturan->format_nomor_surat ?? '470/[NO_URUT]/[BULAN]/[TAHUN]';
+
+        // Convert current month to Roman numeral
+        $romawiBulan = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII'];
+        $bulanSekarang = $romawiBulan[date('n') - 1];
+
+        // Replace placeholders
+        $nomor_surat = str_replace(
+            ['[NO_URUT]', '[KODE_DESA]', '[BULAN]', '[TAHUN]'],
+            [$noUrut, $pengaturan->kode_desa ?? 'DESA', $bulanSekarang, date('Y')],
+            $format
+        );
 
         return view('surat.create', compact('jenis', 'nomor_surat', 'pengaturan'));
     }
@@ -235,6 +249,7 @@ class SuratController extends Controller
             'jenis_surat' => $request->jenis_surat,
             'keperluan' => $request->keperluan,
             'data_tambahan' => $request->data_tambahan, // This will be cast to JSON if Model is set
+            'edited_content' => $request->edited_content,
             'tanggal_cetak' => now(),
         ]);
         return response()->json(['success' => true]);

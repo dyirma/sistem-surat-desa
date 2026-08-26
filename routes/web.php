@@ -38,4 +38,6 @@ Route::middleware('auth')->group(function () {
     Route::post('/pengaturan/penomoran', [\App\Http\Controllers\PengaturanController::class, 'updatePenomoran'])->name('pengaturan.update_penomoran');
 
     Route::get('/riwayat', [\App\Http\Controllers\RiwayatController::class, 'index'])->name('riwayat.index');
+    Route::get('/riwayat/export', [\App\Http\Controllers\RiwayatController::class, 'exportCsv'])->name('riwayat.export');
+    Route::get('/riwayat/{id}/reprint', [\App\Http\Controllers\RiwayatController::class, 'reprint'])->name('riwayat.reprint');
 });
