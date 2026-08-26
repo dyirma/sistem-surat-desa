@@ -173,6 +173,9 @@
         <button type="button" class="tab-button {{ session('active_tab') == 'tab-nomor' ? 'active' : '' }}" onclick="openTab(event, 'tab-nomor')">
             <i class="ti ti-hash"></i> Penomoran Surat
         </button>
+        <button type="button" class="tab-button" onclick="openTab(event, 'tab-bahaya')" style="color: #ef4444;">
+            <i class="ti ti-alert-triangle"></i> Manajemen Data
+        </button>
     </div>
 
     <!-- TAB 1: Profil & Kop Surat -->
@@ -320,6 +323,32 @@
                 </button>
             </div>
         </form>
+    </div>
+
+    <!-- TAB 4: Manajemen Data (Zona Berbahaya) -->
+    <div id="tab-bahaya" class="tab-content">
+        <h3 class="section-title" style="color: #ef4444; border-bottom: 2px solid #fee2e2; padding-bottom: 15px;">Zona Berbahaya</h3>
+        
+        <div style="background: #fff5f5; border: 1px solid #fecaca; border-radius: 12px; padding: 25px; margin-top: 20px;">
+            <div style="display: flex; align-items: flex-start; gap: 20px;">
+                <div style="background: #fee2e2; color: #ef4444; padding: 15px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                    <i class="ti ti-alert-triangle" style="font-size: 32px;"></i>
+                </div>
+                <div style="flex: 1;">
+                    <h4 style="margin: 0 0 8px 0; color: #b91c1c; font-size: 18px;">Kosongkan Seluruh Data Penduduk</h4>
+                    <p style="margin: 0 0 20px 0; color: #7f1d1d; font-size: 14px; line-height: 1.6;">
+                        Tindakan ini akan menghapus <strong>seluruh data warga desa</strong> dari sistem secara permanen. Fitur ini biasanya hanya digunakan saat pertama kali menginstal sistem atau ketika ada perombakan besar-besaran (reset) dari Excel baru. Pastikan Anda sudah memiliki salinan (<em>backup</em>) data sebelum melakukan ini.
+                    </p>
+                    
+                    <form action="{{ route('penduduk.truncate') }}" method="POST" onsubmit="return confirm('PERINGATAN TINGKAT TINGGI: Anda benar-benar yakin ingin menghapus ribuan data penduduk secara permanen? Data tidak dapat dikembalikan.')">
+                        @csrf
+                        <button type="submit" class="btn btn-danger" style="background: #ef4444; border: none; padding: 12px 24px; border-radius: 8px; color: white; font-weight: 600; display: inline-flex; align-items: center; gap: 8px; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='#dc2626'" onmouseout="this.style.background='#ef4444'">
+                            <i class="ti ti-trash"></i> Ya, Kosongkan Data Penduduk
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 @endsection

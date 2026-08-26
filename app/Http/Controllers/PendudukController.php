@@ -9,10 +9,26 @@ use Maatwebsite\Excel\Facades\Excel;
 
 class PendudukController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $penduduks = Penduduk::latest()->paginate(10);
-        return view('penduduk.index', compact('penduduks'));
+        $search = $request->get('search');
+        
+        $query = Penduduk::latest();
+        
+        if ($search) {
+            $query->where(function($q) use ($search) {
+                $q->where('nama', 'like', "%{$search}%")
+                  ->orWhere('nik', 'like', "%{$search}%");
+            });
+        }
+        
+        $penduduks = $query->paginate(10);
+        
+        if ($search) {
+            $penduduks->appends(['search' => $search]);
+        }
+        
+        return view('penduduk.index', compact('penduduks', 'search'));
     }
 
     public function import(Request $request)
