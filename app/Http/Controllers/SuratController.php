@@ -58,7 +58,9 @@ class SuratController extends Controller
             'format_ttd' => 'required|in:1,2,3',
             'data_tambahan' => 'nullable|array',
             'berlaku_dari' => 'nullable|date',
-            'berlaku_sampai' => 'nullable|date',
+            'berlaku_sampai' => 'nullable|string',
+            'tujuan' => 'nullable|string',
+            'keterangan' => 'nullable|string',
         ]);
 
         $penduduk = Penduduk::findOrFail($validated['penduduk_id']);
@@ -93,16 +95,24 @@ class SuratController extends Controller
         $processed_content = '';
 
         // Logic for Masa Berlaku
+        $masaBerlaku = '';
         if (!empty($validated['berlaku_dari'])) {
             \Carbon\Carbon::setLocale('id');
             $dari = \Carbon\Carbon::parse($validated['berlaku_dari'])->translatedFormat('d F Y');
-            $sampai = !empty($validated['berlaku_sampai']) ? \Carbon\Carbon::parse($validated['berlaku_sampai'])->translatedFormat('d F Y') : 'Selesai';
+            $sampai = 'Selesai';
+            if (!empty($validated['berlaku_sampai']) && strtolower($validated['berlaku_sampai']) !== 'selesai') {
+                try {
+                    $sampai = \Carbon\Carbon::parse($validated['berlaku_sampai'])->translatedFormat('d F Y');
+                } catch (\Exception $e) {
+                    $sampai = $validated['berlaku_sampai'];
+                }
+            }
 
             // Masukkan ke array data_tambahan agar otomatis tercetak di tabel dinamis
             if (!isset($validated['data_tambahan'])) {
                 $validated['data_tambahan'] = [];
             }
-            $validated['data_tambahan']['masa_berlaku'] = $dari . ' s/d ' . $sampai;
+            $masaBerlaku = $dari . ' s/d ' . $sampai;
         }
 
         // Map Jenis Kelamin
@@ -168,15 +178,53 @@ class SuratController extends Controller
                 '[USIA]' => $penduduk->usia ?? '-',
                 '[STS_KWN]' => $kwn_formatted,
                 '[STATUS_PERKAWINAN]' => $kwn_formatted,
-                '[KEWARGANEGARAAN]' => 'WNI',
+                '[KEWARGANEGARAAN]' => 'Indonesia', // Hardcoded WNI/Indonesia as per template
                 '[ALAMAT]' => $fullAlamat,
                 '[JABATAN_KADES]' => $pengaturan->jabatan_kades ?? 'Kepala Desa',
                 '[NAMA_DESA]' => ucwords(strtolower(str_replace('DESA ', '', $pengaturan->nama_desa ?? 'Jangglengan'))),
-                '[KETERANGAN_TAMBAHAN]' => !empty($validated['keterangan']) ? $validated['keterangan'] : '',
+                '[KETERANGAN_TAMBAHAN]' => !empty($validated['keterangan']) ? $validated['keterangan'] : '-',
+                '[KETERANGAN]' => !empty($validated['keterangan']) ? $validated['keterangan'] : '-',
+                '[TUJUAN]' => !empty($validated['tujuan']) ? $validated['tujuan'] : '-',
+                '[KEPERLUAN]' => !empty($validated['keperluan']) ? $validated['keperluan'] : '-',
+                '[MASA_BERLAKU]' => $masaBerlaku,
+                '[NOMOR_SURAT]' => $validated['nomor_surat'] ?? '-',
+                '[NAMA_DESA_UPPER]' => strtoupper($desaName),
+                '[NAMA_KECAMATAN]' => strtoupper($pengaturan->nama_kecamatan ?? 'NGUTER'),
+                '[NAMA_KABUPATEN]' => ucwords(strtolower($pengaturan->nama_kabupaten ?? 'Sukoharjo')),
+                '[NAMA_KADES]' => $pengaturan->nama_kades ?? '-',
+                '[NIP_KADES]' => $pengaturan->nip_kades ?? '-',
+                '[TANGGAL_SURAT]' => \Carbon\Carbon::now()->translatedFormat('d F Y'),
                 '[DATA_TAMBAHAN]' => $htmlTambahan,
             ];
 
-            // Keperluan Block
+            // SMART UX: Tentukan pemohon ini Calon Suami atau Calon Istri berdasarkan Jenis Kelamin
+            $isLaki = (strtoupper($validated['jenis_kelamin']) == 'L' || strtoupper($validated['jenis_kelamin']) == 'LAKI-LAKI');
+            
+            $dotString = '...................................................';
+            
+            // Calon Suami
+            $replacements['[NAMA_SUAMI]'] = $isLaki ? strtoupper($validated['nama']) : $dotString;
+            $replacements['[BIN_SUAMI]'] = $dotString;
+            $replacements['[NIK_SUAMI]'] = $isLaki ? $validated['nik'] : $dotString;
+            $replacements['[TTL_SUAMI]'] = $isLaki ? ucwords(strtolower($validated['tempat_lahir'])) . ', ' . \Carbon\Carbon::parse($validated['tanggal_lahir'])->format('d F Y') : $dotString;
+            $replacements['[WARGA_SUAMI]'] = $isLaki ? 'Indonesia' : $dotString;
+            $replacements['[AGAMA_SUAMI]'] = $isLaki ? ucwords(strtolower($validated['agama'])) : $dotString;
+            $replacements['[STATUS_SUAMI]'] = $isLaki ? $kwn_formatted : $dotString;
+            $replacements['[PEKERJAAN_SUAMI]'] = $isLaki ? ucwords(strtolower($validated['pekerjaan'])) : $dotString;
+            $replacements['[ALAMAT_SUAMI]'] = $isLaki ? $fullAlamat : $dotString;
+
+            // Calon Istri
+            $replacements['[NAMA_ISTRI]'] = !$isLaki ? strtoupper($validated['nama']) : $dotString;
+            $replacements['[BINTI_ISTRI]'] = $dotString;
+            $replacements['[NIK_ISTRI]'] = !$isLaki ? $validated['nik'] : $dotString;
+            $replacements['[TTL_ISTRI]'] = !$isLaki ? ucwords(strtolower($validated['tempat_lahir'])) . ', ' . \Carbon\Carbon::parse($validated['tanggal_lahir'])->format('d F Y') : $dotString;
+            $replacements['[WARGA_ISTRI]'] = !$isLaki ? 'Indonesia' : $dotString;
+            $replacements['[AGAMA_ISTRI]'] = !$isLaki ? ucwords(strtolower($validated['agama'])) : $dotString;
+            $replacements['[STATUS_ISTRI]'] = !$isLaki ? $kwn_formatted : $dotString;
+            $replacements['[PEKERJAAN_ISTRI]'] = !$isLaki ? ucwords(strtolower($validated['pekerjaan'])) : $dotString;
+            $replacements['[ALAMAT_ISTRI]'] = !$isLaki ? $fullAlamat : $dotString;
+
+            // Keperluan Block for legacy templates
             $keperluanBlock = '';
             if (!empty($validated['keperluan'])) {
                 $keperluanBlock = '<p style="text-indent: 1cm; margin-top: 10px;">Adapun surat keterangan ini diberikan untuk keperluan: <strong>' . $validated['keperluan'] . '</strong>.</p>';
@@ -188,8 +236,8 @@ class SuratController extends Controller
             }
         } else {
             // Fallback content jika template tidak ada
-            $processed_content = '<p>Yang bertanda tangan di bawah ini menerangkan bahwa:</p>';
-            $processed_content .= '<table style="margin: 10px 0 10px 1.5cm; width: calc(100% - 1.5cm); border-collapse: collapse;">';
+            $processed_content = '<p style="margin-bottom: 15px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Yang bertanda tangan di bawah ini menerangkan bahwa:</p>';
+            $processed_content .= '<table style="margin: 10px 0 10px 0; width: 100%; border-collapse: collapse;">';
             $processed_content .= '<tr><td style="width: 35%; padding: 4px 0; vertical-align: top;">Nama</td><td style="width: 5%; text-align: center; vertical-align: top;">:</td><td style="padding: 4px 0; vertical-align: top;">' . strtoupper($validated['nama']) . '</td></tr>';
             $processed_content .= '<tr><td style="padding: 4px 0; vertical-align: top;">NIK</td><td style="text-align: center; vertical-align: top;">:</td><td style="padding: 4px 0; vertical-align: top;">' . $validated['nik'] . '</td></tr>';
             $processed_content .= '<tr><td style="padding: 4px 0; vertical-align: top;">Tempat Tinggal</td><td style="text-align: center; vertical-align: top;">:</td><td style="padding: 4px 0; vertical-align: top;">' . $fullAlamat . '</td></tr>';
@@ -199,11 +247,10 @@ class SuratController extends Controller
                 $processed_content .= '<p style="margin-top: 15px;">Adapun data tambahan terkait keterangan ini adalah sebagai berikut:</p>';
                 $processed_content .= $htmlTambahan;
             }
-
             if (!empty($validated['keperluan'])) {
-                $processed_content .= '<p style="text-indent: 1cm; margin-top: 15px;">Adapun surat keterangan ini diberikan untuk keperluan: <strong>' . $validated['keperluan'] . '</strong>.</p>';
+                $processed_content .= '<p style="margin-top: 15px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Adapun surat keterangan ini diberikan untuk keperluan: <strong>' . $validated['keperluan'] . '</strong>.</p>';
             }
-            $processed_content .= '<p style="text-indent: 1cm; margin-top: 15px;">Demikian surat keterangan ini dibuat agar dapat dipergunakan sebagaimana mestinya.</p>';
+            $processed_content .= '<p style="margin-top: 15px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Demikian surat keterangan ini dibuat agar dapat dipergunakan sebagaimana mestinya.</p>';
         }
 
         return view('surat.editor', compact('surat', 'validated', 'pengaturan', 'processed_content'));
