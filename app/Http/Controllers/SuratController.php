@@ -41,9 +41,9 @@ class SuratController extends Controller
     {
         $penduduk_id = $request->input('penduduk_id');
         $jenis = $request->input('jenis');
-        
+
         $penduduk = Penduduk::findOrFail($penduduk_id);
-        
+
         return view('surat.preview', compact('penduduk', 'jenis'));
     }
 
@@ -97,7 +97,7 @@ class SuratController extends Controller
             \Carbon\Carbon::setLocale('id');
             $dari = \Carbon\Carbon::parse($validated['berlaku_dari'])->translatedFormat('d F Y');
             $sampai = !empty($validated['berlaku_sampai']) ? \Carbon\Carbon::parse($validated['berlaku_sampai'])->translatedFormat('d F Y') : 'Selesai';
-            
+
             // Masukkan ke array data_tambahan agar otomatis tercetak di tabel dinamis
             if (!isset($validated['data_tambahan'])) {
                 $validated['data_tambahan'] = [];
@@ -120,31 +120,33 @@ class SuratController extends Controller
             foreach ($validated['data_tambahan'] as $k => $v) {
                 $label = ucwords(str_replace('_', ' ', $k));
                 // Jangan ALL CAPS untuk masa_berlaku agar tidak aneh
-                $value = $k === 'masa_berlaku' ? $v : ucwords(strtolower($v)); 
-                $htmlTambahan .= '<tr><td style="padding: 4px 0; vertical-align: top;">'.$nomor.'.</td><td style="padding: 4px 0; vertical-align: top;">' . $label . '</td><td style="padding: 4px 0; vertical-align: top; text-align: center;">:</td><td style="padding: 4px 0; vertical-align: top;">' . $value . '</td></tr>';
+                $value = $k === 'masa_berlaku' ? $v : ucwords(strtolower($v));
+                $htmlTambahan .= '<tr><td style="padding: 4px 0; vertical-align: top;">' . $nomor . '.</td><td style="padding: 4px 0; vertical-align: top;">' . $label . '</td><td style="padding: 4px 0; vertical-align: top; text-align: center;">:</td><td style="padding: 4px 0; vertical-align: top;">' . $value . '</td></tr>';
                 $nomor++;
             }
         }
 
+        // Format Alamat Pintar
+        $rawAlamat = $validated['alamat'] ?? '';
+        $alamatClean = ucwords(strtolower($rawAlamat)); // Fix PUNTUKREJO -> Puntukrejo
+        $alamatClean = str_ireplace(
+            ['rt ', 'rw ', 'rt.', 'rw.', 'rt/', 'rt0', 'rt1', 'rt2', 'rt3', 'rt4', 'rt5', 'rt6', 'rt7', 'rt8', 'rt9'],
+            ['RT ', 'RW ', 'RT.', 'RW.', 'RT/', 'RT 0', 'RT 1', 'RT 2', 'RT 3', 'RT 4', 'RT 5', 'RT 6', 'RT 7', 'RT 8', 'RT 9'],
+            $alamatClean
+        );
+
+        // Jangan tambahkan RT/RW ganda jika admin sudah mengetiknya di database
+        if (!preg_match('/RT/i', $rawAlamat) && !preg_match('/RW/i', $rawAlamat)) {
+            $rtStr = sprintf('%02d', intval($penduduk->rt ?? 0));
+            $rwStr = sprintf('%02d', intval($penduduk->rw ?? 0));
+            $alamatClean .= ' RT ' . $rtStr . '/' . $rwStr;
+        }
+
+        $desaName = ucwords(strtolower(str_replace('DESA ', '', strtoupper($pengaturan->nama_desa ?? 'Jangglengan'))));
+        $fullAlamat = $alamatClean . ' Ds ' . $desaName . ' Kec Nguter Kab Sukoharjo';
+
         if ($template) {
             $processed_content = $template->konten;
-            
-            // Format Alamat Pintar
-            $rawAlamat = $validated['alamat'] ?? '';
-            $alamatClean = ucwords(strtolower($rawAlamat)); // Fix PUNTUKREJO -> Puntukrejo
-            $alamatClean = str_ireplace(['rt ', 'rw ', 'rt.', 'rw.', 'rt/', 'rt0', 'rt1', 'rt2', 'rt3', 'rt4', 'rt5', 'rt6', 'rt7', 'rt8', 'rt9'], 
-                                        ['RT ', 'RW ', 'RT.', 'RW.', 'RT/', 'RT 0', 'RT 1', 'RT 2', 'RT 3', 'RT 4', 'RT 5', 'RT 6', 'RT 7', 'RT 8', 'RT 9'], 
-                                        $alamatClean);
-            
-            // Jangan tambahkan RT/RW ganda jika admin sudah mengetiknya di database
-            if (!preg_match('/RT/i', $rawAlamat) && !preg_match('/RW/i', $rawAlamat)) {
-                $rtStr = sprintf('%02d', intval($penduduk->rt ?? 0));
-                $rwStr = sprintf('%02d', intval($penduduk->rw ?? 0));
-                $alamatClean .= ' RT ' . $rtStr . '/' . $rwStr;
-            }
-            
-            $desaName = ucwords(strtolower(str_replace('DESA ', '', strtoupper($pengaturan->nama_desa ?? 'Jangglengan'))));
-            $fullAlamat = $alamatClean . ' Ds ' . $desaName . ' Kec Nguter Kab Sukoharjo';
 
             // Lakukan string replacement
             $replacements = [
@@ -176,7 +178,7 @@ class SuratController extends Controller
 
             // Keperluan Block
             $keperluanBlock = '';
-            if(!empty($validated['keperluan'])) {
+            if (!empty($validated['keperluan'])) {
                 $keperluanBlock = '<p style="text-indent: 1cm; margin-top: 10px;">Adapun surat keterangan ini diberikan untuk keperluan: <strong>' . $validated['keperluan'] . '</strong>.</p>';
             }
             $replacements['[KEPERLUAN_BLOCK]'] = $keperluanBlock;
@@ -192,13 +194,13 @@ class SuratController extends Controller
             $processed_content .= '<tr><td style="padding: 4px 0; vertical-align: top;">NIK</td><td style="text-align: center; vertical-align: top;">:</td><td style="padding: 4px 0; vertical-align: top;">' . $validated['nik'] . '</td></tr>';
             $processed_content .= '<tr><td style="padding: 4px 0; vertical-align: top;">Tempat Tinggal</td><td style="text-align: center; vertical-align: top;">:</td><td style="padding: 4px 0; vertical-align: top;">' . $fullAlamat . '</td></tr>';
             $processed_content .= '</table>';
-            
+
             if ($htmlTambahan != '') {
                 $processed_content .= '<p style="margin-top: 15px;">Adapun data tambahan terkait keterangan ini adalah sebagai berikut:</p>';
                 $processed_content .= $htmlTambahan;
             }
-            
-            if(!empty($validated['keperluan'])) {
+
+            if (!empty($validated['keperluan'])) {
                 $processed_content .= '<p style="text-indent: 1cm; margin-top: 15px;">Adapun surat keterangan ini diberikan untuk keperluan: <strong>' . $validated['keperluan'] . '</strong>.</p>';
             }
             $processed_content .= '<p style="text-indent: 1cm; margin-top: 15px;">Demikian surat keterangan ini dibuat agar dapat dipergunakan sebagaimana mestinya.</p>';
@@ -221,7 +223,7 @@ class SuratController extends Controller
         ]);
 
         $penduduk = Penduduk::findOrFail($validated['penduduk_id']);
-        
+
         $surat = new Surat([
             'nomor_surat' => $validated['nomor_surat'],
             'penduduk_id' => $validated['penduduk_id'],
@@ -231,12 +233,12 @@ class SuratController extends Controller
         ]);
 
         // Temporarily store it so it can be picked up by the view
-        if(isset($validated['data_tambahan'])) {
+        if (isset($validated['data_tambahan'])) {
             $surat->data_tambahan = $validated['data_tambahan'];
         }
 
         $pengaturan = Pengaturan::first();
-        
+
         // Pass original values to be printed in header/footer, and edited_content for the body
         return view('surat.print', compact('surat', 'validated', 'pengaturan', 'penduduk'));
     }
