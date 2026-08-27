@@ -129,14 +129,17 @@
                     <select name="staf_id" class="form-control" required>
                         <option value="kades">{{ $pengaturan->jabatan_kades ?? 'Kepala Desa' }} ({{ $pengaturan->nama_kades ?? 'Nama Kades' }})</option>
                         <option value="sekdes">An. {{ $pengaturan->jabatan_kades ?? 'Kepala Desa' }} {{ $pengaturan->nama_desa ?? '' }} - Sekdes ({{ $pengaturan->nama_sekdes ?? 'Nama Sekdes' }})</option>
+                        <option value="kaur_tu">An. {{ $pengaturan->jabatan_kades ?? 'Kepala Desa' }} {{ $pengaturan->nama_desa ?? '' }} - Kaur TU & Umum ({{ $pengaturan->nama_kaur_tu ?? 'Nama Kaur TU' }})</option>
+                        <option value="kasi_kesra">An. {{ $pengaturan->jabatan_kades ?? 'Kepala Desa' }} {{ $pengaturan->nama_desa ?? '' }} - Kasi Kesra ({{ $pengaturan->nama_kasi_kesra ?? 'Nama Kasi Kesra' }})</option>
+                        <option value="kasi_pemerintahan">An. {{ $pengaturan->jabatan_kades ?? 'Kepala Desa' }} {{ $pengaturan->nama_desa ?? '' }} - Kasi Pemerintahan ({{ $pengaturan->nama_kasi_pemerintahan ?? 'Nama Kasi Pem' }})</option>
                     </select>
                 </div>
                 <div class="form-group" style="flex: 1;">
                     <label>Format Tanda Tangan</label>
                     <select name="format_ttd" class="form-control" required>
-                        <option value="1">1 Kolom (Kades / Sekdes Saja)</option>
-                        <option value="2">2 Kolom (Pemohon & Kades / Sekdes)</option>
-                        <option value="3" {{ request('jenis') == 'pengantar' ? 'selected' : '' }}>3 Kolom (Pemohon, Mengetahui Camat, & Kades / Sekdes)</option>
+                        <option value="1">1 Kolom (Penandatangan Saja)</option>
+                        <option value="2">2 Kolom (Pemohon & Penandatangan)</option>
+                        <option value="3" {{ request('jenis') == 'pengantar' ? 'selected' : '' }}>3 Kolom (Pemohon, Mengetahui Camat, & Penandatangan)</option>
                     </select>
                 </div>
             </div>

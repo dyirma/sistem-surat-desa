@@ -20,6 +20,12 @@ class Pengaturan extends Model
         'nip_kades',
         'nama_sekdes',
         'nip_sekdes',
+        'nama_kaur_tu',
+        'nip_kaur_tu',
+        'nama_kasi_kesra',
+        'nip_kasi_kesra',
+        'nama_kasi_pemerintahan',
+        'nip_kasi_pemerintahan',
         'penandatangan_aktif',
         'format_nomor_surat',
         'logo_path'

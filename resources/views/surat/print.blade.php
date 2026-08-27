@@ -222,8 +222,17 @@
                         @endif
                         <td style="width: {{ $formatTtd === '3' ? '34%' : '50%' }};">
                             @if($validated['staf_id'] == 'sekdes')
-                                an.Pj.Kepala Desa Jangglengan<br>
+                                An. {{ $pengaturan->jabatan_kades ?? 'Kepala Desa' }} {{ $pengaturan->nama_desa ?? '' }}<br>
                                 Sekretaris Desa
+                            @elseif($validated['staf_id'] == 'kaur_tu')
+                                An. {{ $pengaturan->jabatan_kades ?? 'Kepala Desa' }} {{ $pengaturan->nama_desa ?? '' }}<br>
+                                Kaur TU dan Umum
+                            @elseif($validated['staf_id'] == 'kasi_kesra')
+                                An. {{ $pengaturan->jabatan_kades ?? 'Kepala Desa' }} {{ $pengaturan->nama_desa ?? '' }}<br>
+                                Kasi Kesra
+                            @elseif($validated['staf_id'] == 'kasi_pemerintahan')
+                                An. {{ $pengaturan->jabatan_kades ?? 'Kepala Desa' }} {{ $pengaturan->nama_desa ?? '' }}<br>
+                                Kasi Pemerintahan
                             @else
                                 {{ $pengaturan->jabatan_kades ?? 'Kepala Desa' }}
                             @endif
@@ -244,6 +253,12 @@
                         <td style="font-weight: bold; text-decoration: underline;">
                             @if($validated['staf_id'] == 'sekdes')
                                 {{ strtoupper($pengaturan->nama_sekdes ?? 'NAMA SEKRETARIS DESA') }}
+                            @elseif($validated['staf_id'] == 'kaur_tu')
+                                {{ strtoupper($pengaturan->nama_kaur_tu ?? 'NAMA KAUR TU') }}
+                            @elseif($validated['staf_id'] == 'kasi_kesra')
+                                {{ strtoupper($pengaturan->nama_kasi_kesra ?? 'NAMA KASI KESRA') }}
+                            @elseif($validated['staf_id'] == 'kasi_pemerintahan')
+                                {{ strtoupper($pengaturan->nama_kasi_pemerintahan ?? 'NAMA KASI PEMERINTAHAN') }}
                             @else
                                 {{ strtoupper($pengaturan->nama_kades ?? 'NAMA KEPALA DESA') }}
                             @endif
@@ -271,6 +286,33 @@
                         <p class="nama">{{ strtoupper($pengaturan->nama_sekdes ?? 'NAMA SEKRETARIS DESA') }}</p>
                         @if($pengaturan && $pengaturan->nip_sekdes)
                             <p style="margin:0;">NIP. {{ $pengaturan->nip_sekdes }}</p>
+                        @endif
+                    @elseif($validated['staf_id'] == 'kaur_tu')
+                        <div class="jabatan">
+                            An. {{ $pengaturan->jabatan_kades ?? 'Kepala Desa' }} {{ $pengaturan->nama_desa ?? '' }}<br>
+                            Kaur TU dan Umum
+                        </div>
+                        <p class="nama">{{ strtoupper($pengaturan->nama_kaur_tu ?? 'NAMA KAUR TU') }}</p>
+                        @if($pengaturan && $pengaturan->nip_kaur_tu)
+                            <p style="margin:0;">NIP. {{ $pengaturan->nip_kaur_tu }}</p>
+                        @endif
+                    @elseif($validated['staf_id'] == 'kasi_kesra')
+                        <div class="jabatan">
+                            An. {{ $pengaturan->jabatan_kades ?? 'Kepala Desa' }} {{ $pengaturan->nama_desa ?? '' }}<br>
+                            Kasi Kesra
+                        </div>
+                        <p class="nama">{{ strtoupper($pengaturan->nama_kasi_kesra ?? 'NAMA KASI KESRA') }}</p>
+                        @if($pengaturan && $pengaturan->nip_kasi_kesra)
+                            <p style="margin:0;">NIP. {{ $pengaturan->nip_kasi_kesra }}</p>
+                        @endif
+                    @elseif($validated['staf_id'] == 'kasi_pemerintahan')
+                        <div class="jabatan">
+                            An. {{ $pengaturan->jabatan_kades ?? 'Kepala Desa' }} {{ $pengaturan->nama_desa ?? '' }}<br>
+                            Kasi Pemerintahan
+                        </div>
+                        <p class="nama">{{ strtoupper($pengaturan->nama_kasi_pemerintahan ?? 'NAMA KASI PEMERINTAHAN') }}</p>
+                        @if($pengaturan && $pengaturan->nip_kasi_pemerintahan)
+                            <p style="margin:0;">NIP. {{ $pengaturan->nip_kasi_pemerintahan }}</p>
                         @endif
                     @endif
                 </div>
