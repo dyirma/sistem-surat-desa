@@ -20,29 +20,77 @@
         .judul-surat h3 { font-size: 14pt; text-decoration: underline; margin: 0; text-transform: uppercase; font-weight: bold; }
         .judul-surat p { font-size: 12pt; margin: 5px 0 0; }
 
-        .isi-surat { text-align: justify; text-indent: 0; }
-        .pembuka { text-indent: 1cm; margin-bottom: 15px; }
+        .isi-surat { text-align: justify; text-indent: 0; line-height: 1.25; font-size: 11.5pt; }
+        .pembuka { text-indent: 1cm; margin-bottom: 5px; }
         
-        .tabel-data { margin: 10px 0 10px 1.5cm; width: calc(100% - 1.5cm); border-collapse: collapse; }
+        .tabel-data { margin: 5px 0 5px 1.5cm; width: calc(100% - 1.5cm); border-collapse: collapse; }
         .tabel-data td { padding: 4px 0; vertical-align: top; }
         .tabel-data td:nth-child(1) { width: 35%; }
         .tabel-data td:nth-child(2) { width: 5%; text-align: center; }
         
-        .penutup { text-indent: 1cm; margin-top: 15px; }
+        .penutup { text-indent: 1cm; margin-top: 5px; }
 
-        .ttd-container { display: flex; justify-content: flex-end; margin-top: 50px; page-break-inside: avoid; }
-        .ttd-box { text-align: center; width: 300px; }
-        .ttd-box .tanggal { margin-bottom: 5px; }
-        .ttd-box .jabatan { font-weight: bold; margin-bottom: 80px; }
+        .ttd-container { display: flex; justify-content: flex-end; margin-top: 15px; page-break-inside: avoid; }
+        .ttd-box { text-align: center; width: 300px; font-size: 11.5pt; }
+        .ttd-box .tanggal { margin-bottom: 2px; }
+        .ttd-box .jabatan { font-weight: bold; margin-bottom: 50px; }
         .ttd-box .nama { font-weight: bold; text-decoration: underline; margin: 0; }
         
         .btn-print { display: block; width: 21cm; margin: 20px auto; padding: 15px; background: #3b82f6; color: white; text-align: center; text-decoration: none; border-radius: 50px; font-family: sans-serif; font-weight: bold; cursor: pointer; border: none; font-size: 16px; }
         
         @media print {
-            @page { size: A4; margin: 0; }
-            body { background: white; margin: 0; padding: 0; line-height: 1.5; }
-            .page { margin: 0; padding: 2cm 2cm 2cm 2.5cm; box-shadow: none; width: 21cm; height: 29.7cm; }
+            @page { 
+                size: A4; 
+                margin: 0 !important; /* Menghilangkan SELURUH margin kertas untuk MEMBUNUH TUNTAS Header/Footer/Page Number otomatis dari Browser */
+            }
+            body { background: white; margin: 0; padding: 0; line-height: 1.4; }
+            .page { 
+                margin: 0; 
+                padding: 2cm 2cm 2cm 2.5cm !important; /* Margin Atas (Hal 1), Kanan, Bawah (Hal Terakhir), dan Kiri untuk SELURUH halaman dipindah ke sini */
+                box-shadow: none; 
+                width: 100%; 
+                box-sizing: border-box;
+                height: auto; 
+                min-height: 0; 
+            }
             .btn-print { display: none; }
+            
+            .page-break-separator {
+                display: block !important;
+                height: 2cm !important; /* Memberikan margin semu bagian atas untuk Lembar ke-2, ke-3, dst setelah terpotong */
+                border: none !important;
+                background: transparent !important;
+                margin: 0 !important;
+                page-break-before: always !important;
+            }
+            .page-break-separator::after {
+                content: none !important;
+            }
+        }
+
+        @media screen {
+            .page-break-separator {
+                display: block !important;
+                height: 40px !important;
+                background-color: #e2e8f0 !important;
+                margin: 2cm -2cm 2cm -2.5cm !important; /* Stretch to edges of the .page padding */
+                border-top: 2px dashed #94a3b8 !important;
+                border-bottom: 2px dashed #94a3b8 !important;
+                position: relative !important;
+                opacity: 1 !important;
+            }
+            .page-break-separator::after {
+                content: '✂️ PEMBATAS HALAMAN (Lembar Baru)' !important;
+                position: absolute !important;
+                top: 50% !important;
+                left: 50% !important;
+                transform: translate(-50%, -50%) !important;
+                color: #475569 !important;
+                font-family: sans-serif !important;
+                font-size: 13px !important;
+                font-weight: bold !important;
+                letter-spacing: 1px;
+            }
         }
     </style>
 </head>
@@ -70,7 +118,7 @@
             </div>
         </div>
         
-        @if(isset($surat) && $surat->jenis_surat === 'pengantar' && isset($pengaturan) && $pengaturan->kode_desa)
+        @if(isset($surat) && in_array($surat->jenis_surat, ['pengantar', 'nikah']) && isset($pengaturan) && $pengaturan->kode_desa)
             <div style="font-size: 11pt; margin-top: 8px; line-height: 1.2;">
                 <div>No. Kode Desa/ Kelurahan</div>
                 <div>{{ $pengaturan->kode_desa }}</div>
@@ -83,8 +131,8 @@
                 if($judul == 'domisili') $judul = 'Surat Keterangan Domisili';
                 elseif($judul == 'usaha') $judul = 'Surat Keterangan Usaha';
                 elseif($judul == 'tidak mampu') $judul = 'Surat Keterangan Tidak Mampu';
-                elseif($judul == 'nikah') $judul = 'Surat Pengantar Nikah';
-                elseif($judul == 'pengantar') $judul = 'Surat Pengantar';
+                elseif($judul == 'nikah') $judul = 'Surat Pengantar';
+                elseif($judul == 'pengantar') $judul = 'Surat Keterangan Pengantar';
                 
                 $words = explode(' ', strtoupper($judul));
                 $firstWord = array_shift($words) ?? 'SURAT';
@@ -153,15 +201,15 @@
 
         @if($formatTtd === '3' || $formatTtd === '2')
             <!-- Tanda Tangan Multi Kolom -->
-            <div style="margin-top: 50px; text-align: center; width: 100%;">
+            <div class="ttd-container-multi" style="margin-top: 10px; text-align: center; width: 100%; font-size: 11.5pt;">
                 <table style="width: 100%; border-collapse: collapse; text-align: center; page-break-inside: avoid;">
                     <tr>
                         <td style="width: {{ $formatTtd === '3' ? '33%' : '50%' }};"></td>
                         @if($formatTtd === '3')
                             <td style="width: 33%;"></td>
                         @endif
-                        <td style="width: {{ $formatTtd === '3' ? '34%' : '50%' }}; padding-bottom: 20px;">
-                            {{ ucwords(strtolower(str_replace('DESA ', '', $pengaturan->nama_desa ?? 'Jangglengan'))) }}, {{ \Carbon\Carbon::parse($surat->tanggal_cetak)->format('d F Y') }}
+                        <td style="width: {{ $formatTtd === '3' ? '34%' : '50%' }}; padding-bottom: 10px;">
+                            {{ ucwords(strtolower(str_replace('DESA ', '', $pengaturan->nama_desa ?? 'Jangglengan'))) }}, {{ \Carbon\Carbon::parse($surat->tanggal_cetak)->locale('id')->translatedFormat('d F Y') }}
                         </td>
                     </tr>
                     <tr>
@@ -182,7 +230,7 @@
                         </td>
                     </tr>
                     <tr>
-                        <td style="height: 80px;"></td>
+                        <td style="height: 50px;"></td>
                         @if($formatTtd === '3')
                             <td></td>
                         @endif
@@ -207,7 +255,7 @@
             <!-- Tanda Tangan 1 Kolom Standar -->
             <div class="ttd-container">
                 <div class="ttd-box">
-                    <div class="tanggal">{{ ucwords(strtolower(str_replace('DESA ', '', $pengaturan->nama_desa ?? 'Desa Contoh'))) }}, {{ \Carbon\Carbon::parse($surat->tanggal_cetak)->format('d M Y') }}</div>
+                    <div class="tanggal">{{ ucwords(strtolower(str_replace('DESA ', '', $pengaturan->nama_desa ?? 'Desa Contoh'))) }}, {{ \Carbon\Carbon::parse($surat->tanggal_cetak)->locale('id')->translatedFormat('d F Y') }}</div>
                     
                     @if($validated['staf_id'] == 'kades')
                         <div class="jabatan">{{ $pengaturan->jabatan_kades ?? 'Kepala Desa' }}</div>
@@ -229,6 +277,24 @@
             </div>
         @endif
     </div>
+
+    <!-- Script to duplicate signatures if injections exist -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            var ttdContainer = document.querySelector('.page > .ttd-container') || document.querySelector('.page > .ttd-container-multi'); 
+            var injections = document.querySelectorAll('.ttd-injection');
+            
+            if (injections.length > 0 && ttdContainer) {
+                // If we found injection points (like in multi-page Nikah), duplicate the signature there
+                injections.forEach(function(inj) {
+                    inj.innerHTML = ttdContainer.outerHTML;
+                });
+                
+                // Hide the original bottom signature
+                ttdContainer.style.display = 'none';
+            }
+        });
+    </script>
 
     <script>
         let isSaved = false;

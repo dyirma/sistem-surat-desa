@@ -94,24 +94,32 @@
                 <small class="text-muted" style="display: block; margin-top: 5px;">Nomor surat ini dibuat secara otomatis.</small>
             </div>
 
+            @if(in_array(request('jenis'), ['pengantar', 'nikah']))
             <div class="form-group">
-                <label>Keperluan</label>
-                <textarea name="keperluan" class="form-control" rows="3" placeholder="Contoh: Melamar Pekerjaan, Pengurusan Beasiswa, dll"></textarea>
+                <label>Tujuan <span style="color: red;">*</span></label>
+                <textarea name="tujuan" class="form-control" rows="2" placeholder="Contoh: Ke Muhammad Berlian Aji, Citra Garden jl Kalimantan..." required></textarea>
+            </div>
+            @endif
+
+            <div class="form-group">
+                <label>Keperluan <span style="color: red;">*</span></label>
+                <textarea name="keperluan" class="form-control" rows="2" placeholder="Contoh: Mengirim Kayu, Melamar Pekerjaan, dll" required></textarea>
             </div>
 
             <div class="form-group">
-                <label>Keterangan Tambahan</label>
-                <textarea name="keterangan" class="form-control" rows="2" placeholder="Isi jika ada keterangan tambahan (Opsional)"></textarea>
+                <label>Keterangan Lain-lain (Opsional)</label>
+                <textarea name="keterangan" class="form-control" rows="2" placeholder="Contoh: Bahwa orang tersebut warga desa jangglengan..."></textarea>
             </div>
             
             <div style="display: flex; gap: 20px;">
                 <div class="form-group" style="flex: 1;">
-                    <label>Berlaku Dari</label>
+                    <label>Berlaku Mulai</label>
                     <input type="date" name="berlaku_dari" class="form-control" value="{{ date('Y-m-d') }}">
                 </div>
                 <div class="form-group" style="flex: 1;">
-                    <label>Berlaku Sampai</label>
-                    <input type="date" name="berlaku_sampai" class="form-control" value="{{ date('Y-m-d', strtotime('+1 month')) }}">
+                    <label>Berlaku Sampai (Opsional)</label>
+                    <input type="date" name="berlaku_sampai" class="form-control">
+                    <small class="text-muted" style="display: block; margin-top: 5px;">Biarkan kosong jika masa berlaku sampai "Selesai".</small>
                 </div>
             </div>
 
