@@ -248,14 +248,26 @@
                 <h3 class="section-title" style="margin-bottom: 8px;">Otoritas Penandatanganan</h3>
                 <p style="font-size: 14px; color: #64748b; margin: 0;">Pilih pejabat yang saat ini berwenang menandatangani dokumen.</p>
                 
-                <div class="radio-group">
+                <div class="radio-group" style="flex-wrap: wrap;">
                     <label class="radio-item">
                         <input type="radio" name="penandatangan_aktif" value="kades" {{ old('penandatangan_aktif', $pengaturan->penandatangan_aktif ?? 'kades') == 'kades' ? 'checked' : '' }}>
                         <span style="font-weight: 500; color: #1e293b;">Kepala Desa</span>
                     </label>
                     <label class="radio-item">
                         <input type="radio" name="penandatangan_aktif" value="sekdes" {{ old('penandatangan_aktif', $pengaturan->penandatangan_aktif ?? '') == 'sekdes' ? 'checked' : '' }}>
-                        <span style="font-weight: 500; color: #1e293b;">Sekretaris Desa (A.n. Kepala Desa)</span>
+                        <span style="font-weight: 500; color: #1e293b;">Sekretaris Desa</span>
+                    </label>
+                    <label class="radio-item">
+                        <input type="radio" name="penandatangan_aktif" value="kaur_tu" {{ old('penandatangan_aktif', $pengaturan->penandatangan_aktif ?? '') == 'kaur_tu' ? 'checked' : '' }}>
+                        <span style="font-weight: 500; color: #1e293b;">Kaur TU & Umum</span>
+                    </label>
+                    <label class="radio-item">
+                        <input type="radio" name="penandatangan_aktif" value="kasi_kesra" {{ old('penandatangan_aktif', $pengaturan->penandatangan_aktif ?? '') == 'kasi_kesra' ? 'checked' : '' }}>
+                        <span style="font-weight: 500; color: #1e293b;">Kasi Kesra</span>
+                    </label>
+                    <label class="radio-item">
+                        <input type="radio" name="penandatangan_aktif" value="kasi_pemerintahan" {{ old('penandatangan_aktif', $pengaturan->penandatangan_aktif ?? '') == 'kasi_pemerintahan' ? 'checked' : '' }}>
+                        <span style="font-weight: 500; color: #1e293b;">Kasi Pemerintahan</span>
                     </label>
                 </div>
             </div>
@@ -286,6 +298,33 @@
                 <div class="form-group">
                     <label>NIP Sekretaris Desa</label>
                     <input type="text" name="nip_sekdes" class="form-control" value="{{ old('nip_sekdes', $pengaturan->nip_sekdes ?? '') }}" placeholder="Boleh dikosongkan">
+                </div>
+
+                <div class="form-group">
+                    <label>Nama Kaur TU dan Umum</label>
+                    <input type="text" name="nama_kaur_tu" class="form-control" value="{{ old('nama_kaur_tu', $pengaturan->nama_kaur_tu ?? '') }}">
+                </div>
+                <div class="form-group">
+                    <label>NIP Kaur TU dan Umum</label>
+                    <input type="text" name="nip_kaur_tu" class="form-control" value="{{ old('nip_kaur_tu', $pengaturan->nip_kaur_tu ?? '') }}" placeholder="Boleh dikosongkan">
+                </div>
+
+                <div class="form-group">
+                    <label>Nama Kasi Kesra</label>
+                    <input type="text" name="nama_kasi_kesra" class="form-control" value="{{ old('nama_kasi_kesra', $pengaturan->nama_kasi_kesra ?? '') }}">
+                </div>
+                <div class="form-group">
+                    <label>NIP Kasi Kesra</label>
+                    <input type="text" name="nip_kasi_kesra" class="form-control" value="{{ old('nip_kasi_kesra', $pengaturan->nip_kasi_kesra ?? '') }}" placeholder="Boleh dikosongkan">
+                </div>
+
+                <div class="form-group">
+                    <label>Nama Kasi Pemerintahan</label>
+                    <input type="text" name="nama_kasi_pemerintahan" class="form-control" value="{{ old('nama_kasi_pemerintahan', $pengaturan->nama_kasi_pemerintahan ?? '') }}">
+                </div>
+                <div class="form-group">
+                    <label>NIP Kasi Pemerintahan</label>
+                    <input type="text" name="nip_kasi_pemerintahan" class="form-control" value="{{ old('nip_kasi_pemerintahan', $pengaturan->nip_kasi_pemerintahan ?? '') }}" placeholder="Boleh dikosongkan">
                 </div>
             </div>
 

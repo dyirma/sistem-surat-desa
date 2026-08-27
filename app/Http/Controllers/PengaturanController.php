@@ -56,7 +56,13 @@ class PengaturanController extends Controller
             'nip_kades' => 'nullable',
             'nama_sekdes' => 'required',
             'nip_sekdes' => 'nullable',
-            'penandatangan_aktif' => 'required|in:kades,sekdes',
+            'nama_kaur_tu' => 'required',
+            'nip_kaur_tu' => 'nullable',
+            'nama_kasi_kesra' => 'required',
+            'nip_kasi_kesra' => 'nullable',
+            'nama_kasi_pemerintahan' => 'required',
+            'nip_kasi_pemerintahan' => 'nullable',
+            'penandatangan_aktif' => 'required|in:kades,sekdes,kaur_tu,kasi_kesra,kasi_pemerintahan',
         ]);
 
         $pengaturan = Pengaturan::first() ?? new Pengaturan();
@@ -65,6 +71,12 @@ class PengaturanController extends Controller
         $pengaturan->nip_kades = $validated['nip_kades'];
         $pengaturan->nama_sekdes = $validated['nama_sekdes'];
         $pengaturan->nip_sekdes = $validated['nip_sekdes'];
+        $pengaturan->nama_kaur_tu = $validated['nama_kaur_tu'];
+        $pengaturan->nip_kaur_tu = $validated['nip_kaur_tu'];
+        $pengaturan->nama_kasi_kesra = $validated['nama_kasi_kesra'];
+        $pengaturan->nip_kasi_kesra = $validated['nip_kasi_kesra'];
+        $pengaturan->nama_kasi_pemerintahan = $validated['nama_kasi_pemerintahan'];
+        $pengaturan->nip_kasi_pemerintahan = $validated['nip_kasi_pemerintahan'];
         $pengaturan->penandatangan_aktif = $validated['penandatangan_aktif'];
 
         $pengaturan->save();
