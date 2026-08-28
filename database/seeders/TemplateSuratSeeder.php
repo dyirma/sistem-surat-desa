@@ -422,6 +422,10 @@ class TemplateSuratSeeder extends Seeder
             ]
         ];
 
+        // Hapus template lama yang tidak ada di daftar $templates agar database semua developer sinkron
+        $jenis_surat_list = array_column($templates, 'jenis_surat');
+        \App\Models\TemplateSurat::whereNotIn('jenis_surat', $jenis_surat_list)->delete();
+
         foreach ($templates as $template) {
             \App\Models\TemplateSurat::updateOrCreate(
                 ['jenis_surat' => $template['jenis_surat']],
