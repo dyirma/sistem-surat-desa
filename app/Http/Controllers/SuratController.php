@@ -158,6 +158,30 @@ class SuratController extends Controller
         if ($template) {
             $processed_content = $template->konten;
 
+            // SMART UX: Resolusi Otoritas Penandatangan secara dinamis (Multi Staff Support)
+            $staf_id = $validated['staf_id'] ?? 'kades';
+            $nama_ttd = $pengaturan->nama_kades ?? '-';
+            $nip_ttd = $pengaturan->nip_kades ?? '-';
+            $jabatan_ttd = $pengaturan->jabatan_kades ?? 'Kepala Desa';
+
+            if ($staf_id == 'sekdes') {
+                $nama_ttd = $pengaturan->nama_sekdes ?? '-';
+                $nip_ttd = $pengaturan->nip_sekdes ?? '-';
+                $jabatan_ttd = 'An. ' . ($pengaturan->jabatan_kades ?? 'Kepala Desa') . ' ' . ($pengaturan->nama_desa ?? '') . '<br>Sekretaris Desa';
+            } elseif ($staf_id == 'kaur_tu') {
+                $nama_ttd = $pengaturan->nama_kaur_tu ?? '-';
+                $nip_ttd = $pengaturan->nip_kaur_tu ?? '-';
+                $jabatan_ttd = 'An. ' . ($pengaturan->jabatan_kades ?? 'Kepala Desa') . ' ' . ($pengaturan->nama_desa ?? '') . '<br>Kaur TU dan Umum';
+            } elseif ($staf_id == 'kasi_kesra') {
+                $nama_ttd = $pengaturan->nama_kasi_kesra ?? '-';
+                $nip_ttd = $pengaturan->nip_kasi_kesra ?? '-';
+                $jabatan_ttd = 'An. ' . ($pengaturan->jabatan_kades ?? 'Kepala Desa') . ' ' . ($pengaturan->nama_desa ?? '') . '<br>Kasi Kesra';
+            } elseif ($staf_id == 'kasi_pemerintahan') {
+                $nama_ttd = $pengaturan->nama_kasi_pemerintahan ?? '-';
+                $nip_ttd = $pengaturan->nip_kasi_pemerintahan ?? '-';
+                $jabatan_ttd = 'An. ' . ($pengaturan->jabatan_kades ?? 'Kepala Desa') . ' ' . ($pengaturan->nama_desa ?? '') . '<br>Kasi Pemerintahan';
+            }
+
             // Lakukan string replacement
             $replacements = [
                 '[NAMA]' => strtoupper($validated['nama']),
@@ -180,7 +204,7 @@ class SuratController extends Controller
                 '[STATUS_PERKAWINAN]' => $kwn_formatted,
                 '[KEWARGANEGARAAN]' => 'Indonesia', // Hardcoded WNI/Indonesia as per template
                 '[ALAMAT]' => $fullAlamat,
-                '[JABATAN_KADES]' => $pengaturan->jabatan_kades ?? 'Kepala Desa',
+                '[JABATAN_KADES]' => $jabatan_ttd,
                 '[NAMA_DESA]' => ucwords(strtolower(str_replace('DESA ', '', $pengaturan->nama_desa ?? 'Jangglengan'))),
                 '[KETERANGAN_TAMBAHAN]' => !empty($validated['keterangan']) ? $validated['keterangan'] : '-',
                 '[KETERANGAN]' => !empty($validated['keterangan']) ? $validated['keterangan'] : '-',
@@ -191,8 +215,8 @@ class SuratController extends Controller
                 '[NAMA_DESA_UPPER]' => strtoupper($desaName),
                 '[NAMA_KECAMATAN]' => strtoupper($pengaturan->nama_kecamatan ?? 'NGUTER'),
                 '[NAMA_KABUPATEN]' => ucwords(strtolower($pengaturan->nama_kabupaten ?? 'Sukoharjo')),
-                '[NAMA_KADES]' => $pengaturan->nama_kades ?? '-',
-                '[NIP_KADES]' => $pengaturan->nip_kades ?? '-',
+                '[NAMA_KADES]' => strtoupper($nama_ttd),
+                '[NIP_KADES]' => $nip_ttd,
                 '[TANGGAL_SURAT]' => \Carbon\Carbon::now()->translatedFormat('d F Y'),
                 '[DATA_TAMBAHAN]' => $htmlTambahan,
             ];
