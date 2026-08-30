@@ -246,12 +246,12 @@
                         <td></td>
                     </tr>
                     <tr style="vertical-align: top;">
-                        <td style="font-weight: bold; text-decoration: underline; text-transform: uppercase;">{{ isset($penduduk) ? $penduduk->nama : ($validated['nama'] ?? '') }}</td>
+                        <td style="font-weight: bold; text-decoration: underline; text-transform: uppercase; white-space: nowrap;">{{ isset($penduduk) ? $penduduk->nama : ($validated['nama'] ?? '') }}</td>
                         @if($formatTtd === '3')
-                            <td>....................................</td>
+                            <td style="white-space: nowrap;">....................................</td>
                         @endif
-                        <td>
-                            <div style="font-weight: bold; text-decoration: underline;">
+                        <td style="white-space: nowrap;">
+                            <div style="font-weight: bold; text-decoration: underline; display: inline-block;">
                                 @if($validated['staf_id'] == 'sekdes')
                                     {{ strtoupper($pengaturan->nama_sekdes ?? 'NAMA SEKRETARIS DESA') }}
                                 @elseif($validated['staf_id'] == 'kaur_tu')
