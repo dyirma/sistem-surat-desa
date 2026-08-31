@@ -212,7 +212,7 @@
                             {{ ucwords(strtolower(str_replace('DESA ', '', $pengaturan->nama_desa ?? 'Jangglengan'))) }}, {{ \Carbon\Carbon::parse($surat->tanggal_cetak)->locale('id')->translatedFormat('d F Y') }}
                         </td>
                     </tr>
-                    <tr>
+                    <tr style="vertical-align: top;">
                         <td style="width: {{ $formatTtd === '3' ? '33%' : '50%' }};">Tanda Tangan Pemegang</td>
                         @if($formatTtd === '3')
                             <td style="width: 33%;">
@@ -245,22 +245,35 @@
                         @endif
                         <td></td>
                     </tr>
-                    <tr>
-                        <td style="font-weight: bold; text-decoration: underline; text-transform: uppercase;">{{ isset($penduduk) ? $penduduk->nama : ($validated['nama'] ?? '') }}</td>
+                    <tr style="vertical-align: top;">
+                        <td style="font-weight: bold; text-decoration: underline; text-transform: uppercase; white-space: nowrap;">{{ isset($penduduk) ? $penduduk->nama : ($validated['nama'] ?? '') }}</td>
                         @if($formatTtd === '3')
-                            <td>....................................</td>
+                            <td style="white-space: nowrap;">....................................</td>
                         @endif
-                        <td style="font-weight: bold; text-decoration: underline;">
-                            @if($validated['staf_id'] == 'sekdes')
-                                {{ strtoupper($pengaturan->nama_sekdes ?? 'NAMA SEKRETARIS DESA') }}
-                            @elseif($validated['staf_id'] == 'kaur_tu')
-                                {{ strtoupper($pengaturan->nama_kaur_tu ?? 'NAMA KAUR TU') }}
-                            @elseif($validated['staf_id'] == 'kasi_kesra')
-                                {{ strtoupper($pengaturan->nama_kasi_kesra ?? 'NAMA KASI KESRA') }}
-                            @elseif($validated['staf_id'] == 'kasi_pemerintahan')
-                                {{ strtoupper($pengaturan->nama_kasi_pemerintahan ?? 'NAMA KASI PEMERINTAHAN') }}
-                            @else
-                                {{ strtoupper($pengaturan->nama_kades ?? 'NAMA KEPALA DESA') }}
+                        <td style="white-space: nowrap;">
+                            <div style="font-weight: bold; text-decoration: underline; display: inline-block;">
+                                @if($validated['staf_id'] == 'sekdes')
+                                    {{ strtoupper($pengaturan->nama_sekdes ?? 'NAMA SEKRETARIS DESA') }}
+                                @elseif($validated['staf_id'] == 'kaur_tu')
+                                    {{ strtoupper($pengaturan->nama_kaur_tu ?? 'NAMA KAUR TU') }}
+                                @elseif($validated['staf_id'] == 'kasi_kesra')
+                                    {{ strtoupper($pengaturan->nama_kasi_kesra ?? 'NAMA KASI KESRA') }}
+                                @elseif($validated['staf_id'] == 'kasi_pemerintahan')
+                                    {{ strtoupper($pengaturan->nama_kasi_pemerintahan ?? 'NAMA KASI PEMERINTAHAN') }}
+                                @else
+                                    {{ strtoupper($pengaturan->nama_kades ?? 'NAMA KEPALA DESA') }}
+                                @endif
+                            </div>
+                            @if($validated['staf_id'] == 'sekdes' && !empty($pengaturan->nip_sekdes))
+                                <div>NIP. {{ $pengaturan->nip_sekdes }}</div>
+                            @elseif($validated['staf_id'] == 'kaur_tu' && !empty($pengaturan->nip_kaur_tu))
+                                <div>NIP. {{ $pengaturan->nip_kaur_tu }}</div>
+                            @elseif($validated['staf_id'] == 'kasi_kesra' && !empty($pengaturan->nip_kasi_kesra))
+                                <div>NIP. {{ $pengaturan->nip_kasi_kesra }}</div>
+                            @elseif($validated['staf_id'] == 'kasi_pemerintahan' && !empty($pengaturan->nip_kasi_pemerintahan))
+                                <div>NIP. {{ $pengaturan->nip_kasi_pemerintahan }}</div>
+                            @elseif($validated['staf_id'] == 'kades' && !empty($pengaturan->nip_kades))
+                                <div>NIP. {{ $pengaturan->nip_kades }}</div>
                             @endif
                         </td>
                     </tr>
